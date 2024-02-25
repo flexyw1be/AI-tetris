@@ -4,30 +4,36 @@ from config import *
 from random import *
 
 
-def get_figure():
-    pass
-
-
 class Figure:  # класс фигуры
     def __init__(self):
         self.vy, self.vx = 1, 0
-        self.cords = copy.deepcopy(TETRIMINOS[randint(0, 1)])
+        self.type = randint(0, len(TETRIMINOS)-1)
+        self.cords = copy.deepcopy(TETRIMINOS[self.type])
+        self.moves = copy.deepcopy(MOVES[self.type])
+        self.color = copy.deepcopy(COLORS[self.type])
+
+    def get_figure(self):
+        self.vy, self.vx = 1, 0
+        self.type = randint(0, len(TETRIMINOS)-1)
+        self.cords = copy.deepcopy(TETRIMINOS[self.type])
+        self.moves = copy.deepcopy(MOVES[self.type])
+        self.color = copy.deepcopy(COLORS[self.type])
+
 
     def update(self, figures):
-        print(TETRIMINOS)
+        # print(TETRIMINOS)
         if any([cord[1] >= 19 for cord in self.cords]):
             if figures:
                 figures.extend(self.cords)
             else:
                 figures = copy.deepcopy(self.cords)
-            self.cords = copy.deepcopy(TETRIMINOS[randint(0, 1)])
+            self.get_figure()
             return figures
 
-
         for x, y in self.cords:
-            pygame.draw.rect(display, '#CD5C5C',
+            pygame.draw.rect(display, self.color[0],
                              pygame.Rect(x * BLOCK_SIZE + 100, y * BLOCK_SIZE + 20, BLOCK_SIZE, BLOCK_SIZE))
-            pygame.draw.rect(display, 'DarkRed',
+            pygame.draw.rect(display, self.color[1],
                              pygame.Rect(x * BLOCK_SIZE + 100, y * BLOCK_SIZE + 20, BLOCK_SIZE, BLOCK_SIZE), 4)
 
         for i in range(len(self.cords)):
@@ -36,6 +42,14 @@ class Figure:  # класс фигуры
         self.vx = 0
 
         return figures
+
+    def move(self):
+        for i in range(len(self.cords)):
+            self.cords[i][0] += self.moves[i][0]
+            self.cords[i][1] += self.moves[i][1]
+        for i in range(len(self.cords)):
+            self.moves[i] = [-1 * self.moves[i][0], -1 * self.moves[i][1]]
+        print(self.moves)
 
 
 # поле 20*10
@@ -82,6 +96,10 @@ while not game_over:  # основной цикл игры
                 f.vx = -1
             elif event.key == pygame.K_RIGHT:
                 f.vx = 1
+            elif event.key == pygame.K_UP:
+                f.move()
+            elif event.key == pygame.K_DOWN:
+                f.move()
     g.figures = f.update(g.figures)
     # f.update()
     g.draw_blocks()
