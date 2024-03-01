@@ -1,9 +1,14 @@
-WIDTH = 500
+import pygame
+
+WIDTH = 700
 HEIGHT = 650
 FPS = 10
 BLOCK_SIZE = 30
 
-ICON = ''  # path to icon
+
+FPS = 20
+
+ICON = pygame.image.load('data/icon.png')  # path to icon
 
 TETRIMINOS = [
     [[3, 0], [4, 0], [5, 0], [6, 0]],
@@ -22,3 +27,7 @@ COLORS = [
     ['yellow', 'orange'],
     ['red', 'DarkRed']
 ]
+
+GRID_COLOR = BLOCKS_GRID_COLOR = 'black'
+BACKGROUND_COLOR = 'Snow'
+BLOCKS_COLOR = 'grey'
