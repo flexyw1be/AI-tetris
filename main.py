@@ -25,12 +25,13 @@ class Figure:
         self.rotation = self.rotation + 1
         if self.rotation > len(FIGURES[self.type]) - 1:
             self.rotation = 0
-        self.cords = copy.deepcopy(FIGURES[self.type][self.rotation])
+        # self.cords = copy.deepcopy(FIGURES[self.type][self.rotation])
 
     def move_left(self):
         self.rotation = self.rotation - 1
         if self.rotation < 0:
             self.rotation = len(FIGURES[self.type]) - 1
+        # self.cords = copy.deepcopy(FIGURES[self.type][self.rotation])
 
 
 pygame.init()
