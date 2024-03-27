@@ -5,6 +5,13 @@ HEIGHT = 650
 FPS = 10
 BLOCK_SIZE = 30
 
+LEFT = 200
+TOP = 20
+
+WIDTH_SIZE = 10
+HEIGHT_SIZE = 20
+
+
 ICON = pygame.image.load('data/icon.png')  # path to icon
 
 FIGURES = [

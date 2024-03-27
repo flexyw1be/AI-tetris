@@ -15,7 +15,7 @@ class Figure:
     def get_type(self):
         return randint(0, len(FIGURES) - 1)
 
-    def move_y(self):
+    def move_x(self):
         self.y += 1
         for i in range(len(self.cords)):
             # print(self.cords)
@@ -57,7 +57,7 @@ f = Figure(0, 0)
 
 while not game_over:
     display.fill(BACKGROUND_COLOR)
-    f.move_y()
+    f.move_x()
     for i in range(20):
         for j in range(10):
             if i * 10 + j in f.cords:
