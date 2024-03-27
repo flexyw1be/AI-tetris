@@ -24,11 +24,14 @@ class Figure:
         self.color = COLORS[self.type]
         self.rotation = 0
         self.cords = copy.deepcopy(FIGURES[self.type][self.rotation])
+        self.islife = True
 
     def get_type(self):
         return randint(0, len(FIGURES) - 1)
 
     def move_y(self):
+        if not self.check(0, 1):
+            return
         self.y += 1
         for i in range(len(self.cords)):
             # print(self.cords)
@@ -47,16 +50,31 @@ class Figure:
         # self.cords = copy.deepcopy(FIGURES[self.type][self.rotation])
 
     def check(self, x, y):
-        pass
+        for i in self.cords:
+            if i % WIDTH_SIZE + x >= WIDTH_SIZE or i % WIDTH_SIZE + x < 0:
+                return False
+            if (i // WIDTH_SIZE + y) // HEIGHT_SIZE >= 1:
+                self.add_block(list_of_blocks, i)
+                self.islife = False
+                return False
+        return True
 
         # TODO:
         # сделать проверку, можно ли походить в определенную клетку
 
     def move_left(self):
+        if not self.check(-1, 0):
+            return
         self.x -= 1
 
     def move_right(self):
+        if not self.check(1, 0):
+            return
         self.x += 1
+
+    def add_block(self, lst: [int], block: int):
+        lst.add(block)
+        return lst
 
     def __str__(self):
         return f'{self.cords}'
@@ -69,7 +87,7 @@ pygame.display.set_caption('AI-Tetris')
 pygame.display.set_icon(ICON)
 display.fill(BACKGROUND_COLOR)
 
-list_of_blocks = []
+list_of_blocks = set()
 
 game_over = False
 clock = pygame.time.Clock()
@@ -101,6 +119,8 @@ while not game_over:
                 f.move_left()
             if event.key == pygame.K_RIGHT:
                 f.move_right()
+    if not f.islife:
+        f.__del__()
     pygame.display.flip()
     clock.tick(fps)
 pygame.quit()
