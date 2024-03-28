@@ -99,12 +99,14 @@ list_of_blocks = set()
 game_over = False
 clock = pygame.time.Clock()
 
-fps = 375
+fps = 10
 
 clock.tick(fps)
 
 f = Figure(0, 0)
 counter = 0
+
+pressing_down = False
 while not game_over:
     display.fill(BACKGROUND_COLOR)
     counter += 1
@@ -124,12 +126,15 @@ while not game_over:
             if event.key == pygame.K_UP:
                 f.rotate_right()
             if event.key == pygame.K_DOWN:
-                f.rotate_left()
+                pressing_down = True
             if event.key == pygame.K_LEFT:
                 f.move_left()
             if event.key == pygame.K_RIGHT:
                 f.move_right()
-    if counter % (fps // 2) == 0:
+        if event.type == pygame.KEYUP:
+            if event.key == pygame.K_DOWN:
+                pressing_down = False
+    if counter % (fps // 2) == 0 or pressing_down:
         f.move_y()
     pygame.display.flip()
     clock.tick(fps)
