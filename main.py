@@ -14,15 +14,20 @@ def draw_figure(x, y, color):
     pygame.draw.rect(display, GRID_COLOR,
                      pygame.Rect(LEFT + x * BLOCK_SIZE, y * BLOCK_SIZE + TOP, BLOCK_SIZE, BLOCK_SIZE), 2)
 
+def draw_blocks(x, y):
+    pygame.draw.rect(display, BLOCKS_COLOR, pygame.Rect(LEFT + x * BLOCK_SIZE, y * BLOCK_SIZE + TOP, BLOCK_SIZE, BLOCK_SIZE))
+    pygame.draw.rect(display, GRID_COLOR,
+                     pygame.Rect(LEFT + x * BLOCK_SIZE, y * BLOCK_SIZE + TOP, BLOCK_SIZE, BLOCK_SIZE), 2)
+
+
 
 class Figure:
-    s = 'жопа'
 
     def __init__(self, x, y):
         self.x, self.y = x, y
         self.type = self.get_type()
         self.color = COLORS[self.type]
-        self.rotation = 0
+        self.rotation = randint(0, len(FIGURES[self.type]) - 1)
         self.cords = copy.deepcopy(FIGURES[self.type][self.rotation])
         self.islife = True
 
@@ -99,11 +104,12 @@ list_of_blocks = set()
 game_over = False
 clock = pygame.time.Clock()
 
-fps = 10
+fps = 50
 
 clock.tick(fps)
 
 f = Figure(0, 0)
+next_figure = Figure(0, 0)
 counter = 0
 
 pressing_down = False
@@ -118,6 +124,8 @@ while not game_over:
             draw_grid(j, i)
             if i * 10 + j in f.cords:
                 draw_figure(j, i, f.color)
+            if i * 10 + j in list_of_blocks:
+                draw_blocks(j, i)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -136,6 +144,10 @@ while not game_over:
                 pressing_down = False
     if counter % (fps // 2) == 0 or pressing_down:
         f.move_y()
+    if not f.islife:
+        list_of_blocks.update(f.cords)
+        f = next_figure
+        next_figure = Figure(0, 0)
     pygame.display.flip()
     clock.tick(fps)
 pygame.quit()
