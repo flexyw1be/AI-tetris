@@ -33,21 +33,26 @@ class Figure:
         if not self.check(0, 1):
             return
         self.y += 1
-        for i in range(len(self.cords)):
-            # print(self.cords)
-            self.cords[i] = 10 * self.y + self.x + copy.deepcopy(FIGURES[self.type][self.rotation][i])
+        self.update()
 
     def rotate_right(self):
         self.rotation = self.rotation + 1
         if self.rotation > len(FIGURES[self.type]) - 1:
             self.rotation = 0
-        # self.cords = copy.deepcopy(FIGURES[self.type][self.rotation])
+        self.cords = copy.deepcopy(FIGURES[self.type][self.rotation])
+        self.update()
+
+    def update(self):
+        for i in range(len(self.cords)):
+            # print(self.cords)
+            self.cords[i] = 10 * self.y + self.x + copy.deepcopy(FIGURES[self.type][self.rotation][i])
 
     def rotate_left(self):
         self.rotation = self.rotation - 1
         if self.rotation < 0:
             self.rotation = len(FIGURES[self.type]) - 1
-        # self.cords = copy.deepcopy(FIGURES[self.type][self.rotation])
+        self.cords = copy.deepcopy(FIGURES[self.type][self.rotation])
+        self.update()
 
     def check(self, x, y):
         for i in self.cords:
@@ -66,11 +71,13 @@ class Figure:
         if not self.check(-1, 0):
             return
         self.x -= 1
+        self.update()
 
     def move_right(self):
         if not self.check(1, 0):
             return
         self.x += 1
+        self.update()
 
     def add_block(self, lst: [int], block: int):
         lst.add(block)
@@ -92,15 +99,18 @@ list_of_blocks = set()
 game_over = False
 clock = pygame.time.Clock()
 
-fps = 3
+fps = 375
 
 clock.tick(fps)
 
 f = Figure(0, 0)
-
+counter = 0
 while not game_over:
     display.fill(BACKGROUND_COLOR)
-    f.move_y()
+    counter += 1
+    if counter > 100000:
+        counter = 0
+
     for i in range(20):
         for j in range(10):
             draw_grid(j, i)
@@ -119,8 +129,8 @@ while not game_over:
                 f.move_left()
             if event.key == pygame.K_RIGHT:
                 f.move_right()
-    if not f.islife:
-        f.__del__()
+    if counter % (fps // 2) == 0:
+        f.move_y()
     pygame.display.flip()
     clock.tick(fps)
 pygame.quit()
