@@ -37,27 +37,26 @@ def draw_blocks(x: int, y: int) -> None:
     pygame.draw.rect(display, GRID_COLOR,
                      pygame.Rect(LEFT + x * BLOCK_SIZE, y * BLOCK_SIZE + TOP, BLOCK_SIZE, BLOCK_SIZE), 2)
 
+
 def line_go_down(ind: int, lst: list) -> list:
     for i in range(0, ind):
         if i in lst:
             lst[lst.index(i)] += 10
     return lst
 
+
 def check_break_lines(lst: list) -> list:
     lst = sorted(lst)
     for i in range(0, 191, 10):
         print(i, i + 9)
         if (i + 9 in lst and i in lst):
-            print(lst.index(i+ 9) - lst.index(i))
-        if (i + 9 in lst and i in lst) and lst.index(i+ 9) - lst.index(i) == 9:
-            for j in range(i, i+10):
+            print(lst.index(i + 9) - lst.index(i))
+        if (i + 9 in lst and i in lst) and lst.index(i + 9) - lst.index(i) == 9:
+            for j in range(i, i + 10):
                 lst.remove(j)
             line_go_down(i, lst)
 
-
     return lst
-
-
 
 
 class Figure:
@@ -74,12 +73,14 @@ class Figure:
         return randint(0, len(FIGURES) - 1)
 
     def move_y(self):
-        if not self.check(0, 1):
+        if not self.check_y(1, list_of_blocks):
             return
         self.y += 1
         self.update()
 
     def rotate_right(self) -> None:
+        if not self.check_rotation(1):
+            return
         self.rotation = self.rotation + 1
         if self.rotation > len(FIGURES[self.type]) - 1:
             self.rotation = 0
@@ -92,33 +93,38 @@ class Figure:
             self.cords[i] = 10 * self.y + self.x + copy.deepcopy(FIGURES[self.type][self.rotation][i])
 
     def rotate_left(self) -> None:
+        if not self.check_rotation(-1):
+            return
         self.rotation = self.rotation - 1
         if self.rotation < 0:
             self.rotation = len(FIGURES[self.type]) - 1
         self.cords = copy.deepcopy(FIGURES[self.type][self.rotation])
         self.update()
 
-    def check(self, x: int, y: int) -> bool:
+    def check_x(self, x: int, lst: list) -> bool:
         for i in self.cords:
-            if i % WIDTH_SIZE + x >= WIDTH_SIZE or i % WIDTH_SIZE + x < 0:
+            if i % WIDTH_SIZE + x >= WIDTH_SIZE or i % WIDTH_SIZE + x < 0 or i+x in lst:
                 return False
-            if (i // WIDTH_SIZE + y) // HEIGHT_SIZE >= 1:
+        return True
+
+    def check_y(self, y: int, lst:list):
+        for i in self.cords:
+            if (i // WIDTH_SIZE + y) // HEIGHT_SIZE >= 1 or i + 10 * y in lst:
                 self.add_block(list_of_blocks, i)
                 self.islife = False
                 return False
         return True
-
         # TODO:
         # сделать проверку, можно ли походить в определенную клетку
 
     def move_left(self):
-        if not self.check(-1, 0):
+        if not self.check_x(-1, list_of_blocks):
             return
         self.x -= 1
         self.update()
 
     def move_right(self):
-        if not self.check(1, 0):
+        if not self.check_x(1, list_of_blocks):
             return
         self.x += 1
         self.update()
@@ -130,6 +136,16 @@ class Figure:
     def __str__(self) -> str:
         return f'{self.cords}'
 
+    def check_rotation(self, r):
+        old_rotation = 0
+        self.rotation = self.rotation - 1
+        if self.rotation < 0:
+            self.rotation = len(FIGURES[self.type]) - 1
+        self.cords = copy.deepcopy(FIGURES[self.type][self.rotation])
+        if self.check_x(0, list_of_blocks) and self.check_y(0, list_of_blocks):
+            return True
+        self.rotation = old_rotation
+        return False
 
 
 pygame.init()
@@ -204,7 +220,6 @@ while not game_over:
             dryness = 0
         else:
             dryness += 1
-    # draw_new_grid()
     pygame.display.flip()
     clock.tick(fps)
 pygame.quit()
@@ -212,7 +227,7 @@ pygame.quit()
 # TODO:
 # 1) рисовать сетку каждый проход цикла done
 # 2) обработать коллизии (останавливать фигуры, удалять столбцы)
-# 3) показывать следующую фигуру done 
+# 3) показывать следующую фигуру done
 # 4) начислять очки, изменять скорость
 # 5) подкрутить sql
 # 6) сделать меню и HUD
