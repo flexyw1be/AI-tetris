@@ -49,7 +49,7 @@ def check_break_lines(lst: list) -> list:
     lst = sorted(lst)
     for i in range(0, 191, 10):
         print(i, i + 9)
-        if (i + 9 in lst and i in lst):
+        if i + 9 in lst and i in lst:
             print(lst.index(i + 9) - lst.index(i))
         if (i + 9 in lst and i in lst) and lst.index(i + 9) - lst.index(i) == 9:
             for j in range(i, i + 10):
@@ -64,6 +64,7 @@ class Figure:
     def __init__(self, x: int, y: int) -> None:
         self.x, self.y = x, y
         self.type = self.get_type()
+        # self.type = 0
         self.color = COLORS[self.type]
         self.rotation = randint(0, len(FIGURES[self.type]) - 1)
         self.cords = copy.deepcopy(FIGURES[self.type][self.rotation])
@@ -79,54 +80,50 @@ class Figure:
         self.update()
 
     def rotate_right(self) -> None:
-        if not self.check_rotation(1):
-            return
-        self.rotation = self.rotation + 1
-        if self.rotation > len(FIGURES[self.type]) - 1:
-            self.rotation = 0
+        old_rotation = self.rotation
+        self.rotation = (self.rotation + 1) % len(FIGURES[self.type])
+
         self.cords = copy.deepcopy(FIGURES[self.type][self.rotation])
+        if not self.intersects(list_of_blocks, self.cords) or not self.check_rotate():
+            self.rotation = old_rotation
+            self.cords = copy.deepcopy(FIGURES[self.type][self.rotation])
+
         self.update()
 
     def update(self) -> None:
         for i in range(len(self.cords)):
-            # print(self.cords)
             self.cords[i] = 10 * self.y + self.x + copy.deepcopy(FIGURES[self.type][self.rotation][i])
 
-    def rotate_left(self) -> None:
-        if not self.check_rotation(-1):
-            return
-        self.rotation = self.rotation - 1
-        if self.rotation < 0:
-            self.rotation = len(FIGURES[self.type]) - 1
-        self.cords = copy.deepcopy(FIGURES[self.type][self.rotation])
-        self.update()
-
-    def check_x(self, x: int, lst: list) -> bool:
-        for i in self.cords:
-            if i % WIDTH_SIZE + x >= WIDTH_SIZE or i % WIDTH_SIZE + x < 0 or i+x in lst:
+    def intersects(self, lst: list, cords: list) -> bool:
+        for i in cords:
+            if i + 10 * self.y + self.x in lst:
                 return False
         return True
 
-    def check_y(self, y: int, lst:list):
+    def check_rotate(self):
         for i in self.cords:
-            if (i // WIDTH_SIZE + y) // HEIGHT_SIZE >= 1 or i + 10 * y in lst:
+            if self.x + i % 10 < 0 or self.x + i % 10 > 9:
+                return False
+        return True
+
+    def check_x(self, x: int, lst: list) -> bool:
+        for i in self.cords:
+            if i % 10 + x > 9 or i % 10 + x < 0 or i + x in lst:
+                return False
+        return True
+
+    def check_y(self, y: int, lst: list):
+        for i in self.cords:
+            if (i // 10 + y) // 20 >= 1 or i + 10 * y in lst:
                 self.add_block(list_of_blocks, i)
                 self.islife = False
                 return False
         return True
-        # TODO:
-        # сделать проверку, можно ли походить в определенную клетку
 
-    def move_left(self):
-        if not self.check_x(-1, list_of_blocks):
+    def move_x(self, x: int):
+        if not self.check_x(x, list_of_blocks):
             return
-        self.x -= 1
-        self.update()
-
-    def move_right(self):
-        if not self.check_x(1, list_of_blocks):
-            return
-        self.x += 1
+        self.x += x
         self.update()
 
     def add_block(self, lst: list, block: int) -> list:
@@ -135,17 +132,6 @@ class Figure:
 
     def __str__(self) -> str:
         return f'{self.cords}'
-
-    def check_rotation(self, r):
-        old_rotation = 0
-        self.rotation = self.rotation - 1
-        if self.rotation < 0:
-            self.rotation = len(FIGURES[self.type]) - 1
-        self.cords = copy.deepcopy(FIGURES[self.type][self.rotation])
-        if self.check_x(0, list_of_blocks) and self.check_y(0, list_of_blocks):
-            return True
-        self.rotation = old_rotation
-        return False
 
 
 pygame.init()
@@ -200,15 +186,14 @@ while not game_over:
             if event.key == pygame.K_DOWN:
                 pressing_down = True
             if event.key == pygame.K_LEFT:
-                f.move_left()
+                f.move_x(-1)
             if event.key == pygame.K_RIGHT:
-                f.move_right()
+                f.move_x(1)
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_DOWN:
                 pressing_down = False
     if counter % (fps // g) == 0 or pressing_down:
         f.move_y()
-    print(list_of_blocks)
     if not f.islife:
         list_of_blocks.extend(f.cords)
         list_of_blocks = list(set(list_of_blocks))
