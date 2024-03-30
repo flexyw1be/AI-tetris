@@ -37,6 +37,28 @@ def draw_blocks(x: int, y: int) -> None:
     pygame.draw.rect(display, GRID_COLOR,
                      pygame.Rect(LEFT + x * BLOCK_SIZE, y * BLOCK_SIZE + TOP, BLOCK_SIZE, BLOCK_SIZE), 2)
 
+def line_go_down(ind: int, lst: list) -> list:
+    for i in range(0, ind):
+        if i in lst:
+            lst[lst.index(i)] += 10
+    return lst
+
+def check_break_lines(lst: list) -> list:
+    lst = sorted(lst)
+    for i in range(0, 191, 10):
+        print(i, i + 9)
+        if (i + 9 in lst and i in lst):
+            print(lst.index(i+ 9) - lst.index(i))
+        if (i + 9 in lst and i in lst) and lst.index(i+ 9) - lst.index(i) == 9:
+            for j in range(i, i+10):
+                lst.remove(j)
+            line_go_down(i, lst)
+
+
+    return lst
+
+
+
 
 class Figure:
 
@@ -101,12 +123,13 @@ class Figure:
         self.x += 1
         self.update()
 
-    def add_block(self, lst: int, block: int) -> set:
-        lst.add(block)
+    def add_block(self, lst: list, block: int) -> list:
+        lst.append(block)
         return lst
 
-    def __str__(self) -> list:
+    def __str__(self) -> str:
         return f'{self.cords}'
+
 
 
 pygame.init()
@@ -116,7 +139,7 @@ pygame.display.set_caption('AI-Tetris')
 pygame.display.set_icon(ICON)
 display.fill(BACKGROUND_COLOR)
 
-list_of_blocks = set()
+list_of_blocks = []
 
 game_over = False
 clock = pygame.time.Clock()
@@ -124,6 +147,9 @@ clock = pygame.time.Clock()
 fps = 30
 
 score = 0
+
+count_of_broken_lines = 0
+count_of_figures = 1
 
 clock.tick(fps)
 g = 1.75
@@ -166,10 +192,14 @@ while not game_over:
                 pressing_down = False
     if counter % (fps // g) == 0 or pressing_down:
         f.move_y()
+    print(list_of_blocks)
     if not f.islife:
-        list_of_blocks.update(f.cords)
+        list_of_blocks.extend(f.cords)
+        list_of_blocks = list(set(list_of_blocks))
         f = next_figure
         next_figure = Figure(0, 0)
+        count_of_figures += 1
+        list_of_blocks = check_break_lines(list_of_blocks)
         if f.type == 0:
             dryness = 0
         else:
