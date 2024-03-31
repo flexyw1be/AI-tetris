@@ -2,88 +2,135 @@ import pygame
 import copy
 from config import *
 from random import *
+import peewee
 
 
-def draw_grid(x, y):
+class Menu():
+    def __init__(self) -> None:
+        pass
+
+
+class HUD():
+    def __init__(self) -> None:
+        pass
+
+
+def draw_grid(x: int, y: int) -> None:
     pygame.draw.rect(display, GRID_COLOR,
                      pygame.Rect(LEFT + x * BLOCK_SIZE, y * BLOCK_SIZE + TOP, BLOCK_SIZE, BLOCK_SIZE), 1)
 
 
-def draw_figure(x, y, color):
+def draw_new_grid() -> None:
+    pygame.draw.rect(display, GRID_COLOR,
+                     pygame.Rect(LEFT + 11 * BLOCK_SIZE, 1 * BLOCK_SIZE + TOP, BLOCK_SIZE * 4, BLOCK_SIZE * 4), 2)
+
+
+def draw_figure(x: int, y: int, color: str) -> None:
     pygame.draw.rect(display, color, pygame.Rect(LEFT + x * BLOCK_SIZE, y * BLOCK_SIZE + TOP, BLOCK_SIZE, BLOCK_SIZE))
     pygame.draw.rect(display, GRID_COLOR,
                      pygame.Rect(LEFT + x * BLOCK_SIZE, y * BLOCK_SIZE + TOP, BLOCK_SIZE, BLOCK_SIZE), 2)
 
 
-class Figure:
-    s = 'жопа'
+def draw_blocks(x: int, y: int) -> None:
+    pygame.draw.rect(display, BLOCKS_COLOR,
+                     pygame.Rect(LEFT + x * BLOCK_SIZE, y * BLOCK_SIZE + TOP, BLOCK_SIZE, BLOCK_SIZE))
+    pygame.draw.rect(display, GRID_COLOR,
+                     pygame.Rect(LEFT + x * BLOCK_SIZE, y * BLOCK_SIZE + TOP, BLOCK_SIZE, BLOCK_SIZE), 2)
 
-    def __init__(self, x, y):
+
+def line_go_down(ind: int, lst: list) -> list:
+    for i in range(0, ind):
+        if i in lst:
+            lst[lst.index(i)] += 10
+    return lst
+
+
+def check_break_lines(lst: list) -> list:
+    lst = sorted(lst)
+    for i in range(0, 191, 10):
+        print(i, i + 9)
+        if i + 9 in lst and i in lst:
+            print(lst.index(i + 9) - lst.index(i))
+        if (i + 9 in lst and i in lst) and lst.index(i + 9) - lst.index(i) == 9:
+            for j in range(i, i + 10):
+                lst.remove(j)
+            line_go_down(i, lst)
+
+    return lst
+
+
+class Figure:
+
+    def __init__(self, x: int, y: int) -> None:
         self.x, self.y = x, y
         self.type = self.get_type()
+        # self.type = 0
         self.color = COLORS[self.type]
-        self.rotation = 0
+        self.rotation = randint(0, len(FIGURES[self.type]) - 1)
         self.cords = copy.deepcopy(FIGURES[self.type][self.rotation])
         self.islife = True
 
-    def get_type(self):
+    def get_type(self) -> int:
         return randint(0, len(FIGURES) - 1)
 
     def move_y(self):
-        if not self.check(0, 1):
+        if not self.check_y(1, list_of_blocks):
             return
         self.y += 1
         self.update()
 
-    def rotate_right(self):
-        self.rotation = self.rotation + 1
-        if self.rotation > len(FIGURES[self.type]) - 1:
-            self.rotation = 0
+    def rotate_right(self) -> None:
+        old_rotation = self.rotation
+        self.rotation = (self.rotation + 1) % len(FIGURES[self.type])
+
         self.cords = copy.deepcopy(FIGURES[self.type][self.rotation])
+        if not self.intersects(list_of_blocks, self.cords) or not self.check_rotate():
+            self.rotation = old_rotation
+            self.cords = copy.deepcopy(FIGURES[self.type][self.rotation])
+
         self.update()
 
-    def update(self):
+    def update(self) -> None:
         for i in range(len(self.cords)):
-            # print(self.cords)
             self.cords[i] = 10 * self.y + self.x + copy.deepcopy(FIGURES[self.type][self.rotation][i])
 
-    def rotate_left(self):
-        self.rotation = self.rotation - 1
-        if self.rotation < 0:
-            self.rotation = len(FIGURES[self.type]) - 1
-        self.cords = copy.deepcopy(FIGURES[self.type][self.rotation])
-        self.update()
-
-    def check(self, x, y):
-        for i in self.cords:
-            if i % WIDTH_SIZE + x >= WIDTH_SIZE or i % WIDTH_SIZE + x < 0:
+    def intersects(self, lst: list, cords: list) -> bool:
+        for i in cords:
+            if i + 10 * self.y + self.x in lst:
                 return False
-            if (i // WIDTH_SIZE + y) // HEIGHT_SIZE >= 1:
+        return True
+
+    def check_rotate(self):
+        for i in self.cords:
+            if self.x + i % 10 < 0 or self.x + i % 10 > 9:
+                return False
+        return True
+
+    def check_x(self, x: int, lst: list) -> bool:
+        for i in self.cords:
+            if i % 10 + x > 9 or i % 10 + x < 0 or i + x in lst:
+                return False
+        return True
+
+    def check_y(self, y: int, lst: list):
+        for i in self.cords:
+            if (i // 10 + y) // 20 >= 1 or i + 10 * y in lst:
                 self.add_block(list_of_blocks, i)
                 self.islife = False
                 return False
         return True
 
-        # TODO:
-        # сделать проверку, можно ли походить в определенную клетку
-
-    def move_left(self):
-        if not self.check(-1, 0):
+    def move_x(self, x: int):
+        if not self.check_x(x, list_of_blocks):
             return
-        self.x -= 1
+        self.x += x
         self.update()
 
-    def move_right(self):
-        if not self.check(1, 0):
-            return
-        self.x += 1
-        self.update()
-
-    def add_block(self, lst: [int], block: int):
-        lst.add(block)
+    def add_block(self, lst: list, block: int) -> list:
+        lst.append(block)
         return lst
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'{self.cords}'
 
 
@@ -94,28 +141,41 @@ pygame.display.set_caption('AI-Tetris')
 pygame.display.set_icon(ICON)
 display.fill(BACKGROUND_COLOR)
 
-list_of_blocks = set()
+list_of_blocks = []
 
 game_over = False
 clock = pygame.time.Clock()
 
-fps = 375
+fps = 30
+
+score = 0
+
+count_of_broken_lines = 0
+count_of_figures = 1
 
 clock.tick(fps)
-
+g = 1.75
 f = Figure(0, 0)
+next_figure = Figure(0, 0)
 counter = 0
+dryness = 0 if f.type == 0 else 1
+# g = 20
+
+pressing_down = False
 while not game_over:
     display.fill(BACKGROUND_COLOR)
     counter += 1
     if counter > 100000:
         counter = 0
-
     for i in range(20):
         for j in range(10):
             draw_grid(j, i)
             if i * 10 + j in f.cords:
                 draw_figure(j, i, f.color)
+            if i * 10 + j in next_figure.cords:
+                draw_figure(j + 8, i + 2, next_figure.color)
+            if i * 10 + j in list_of_blocks:
+                draw_blocks(j, i)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -124,21 +184,35 @@ while not game_over:
             if event.key == pygame.K_UP:
                 f.rotate_right()
             if event.key == pygame.K_DOWN:
-                f.rotate_left()
+                pressing_down = True
             if event.key == pygame.K_LEFT:
-                f.move_left()
+                f.move_x(-1)
             if event.key == pygame.K_RIGHT:
-                f.move_right()
-    if counter % (fps // 2) == 0:
+                f.move_x(1)
+        if event.type == pygame.KEYUP:
+            if event.key == pygame.K_DOWN:
+                pressing_down = False
+    if counter % (fps // g) == 0 or pressing_down:
         f.move_y()
+    if not f.islife:
+        list_of_blocks.extend(f.cords)
+        list_of_blocks = list(set(list_of_blocks))
+        f = next_figure
+        next_figure = Figure(0, 0)
+        count_of_figures += 1
+        list_of_blocks = check_break_lines(list_of_blocks)
+        if f.type == 0:
+            dryness = 0
+        else:
+            dryness += 1
     pygame.display.flip()
     clock.tick(fps)
 pygame.quit()
 
 # TODO:
-# 1) рисовать сетку каждый проход цикла
+# 1) рисовать сетку каждый проход цикла done
 # 2) обработать коллизии (останавливать фигуры, удалять столбцы)
-# 3) показывать следующую фигуру
+# 3) показывать следующую фигуру done
 # 4) начислять очки, изменять скорость
 # 5) подкрутить sql
 # 6) сделать меню и HUD
