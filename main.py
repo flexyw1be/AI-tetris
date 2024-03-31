@@ -2,7 +2,7 @@ import pygame
 import copy
 from config import *
 from random import *
-import peewee
+
 
 
 class Menu():
@@ -162,6 +162,7 @@ dryness = 0 if f.type == 0 else 1
 # g = 20
 
 pressing_down = False
+flLeft = flRight = False
 while not game_over:
     display.fill(BACKGROUND_COLOR)
     counter += 1
@@ -186,12 +187,20 @@ while not game_over:
             if event.key == pygame.K_DOWN:
                 pressing_down = True
             if event.key == pygame.K_LEFT:
-                f.move_x(-1)
-            if event.key == pygame.K_RIGHT:
-                f.move_x(1)
+                flLeft = True
+
+            elif event.key == pygame.K_RIGHT:
+                flRight = True
+
         if event.type == pygame.KEYUP:
+            if event.key in [pygame.K_LEFT, pygame.K_RIGHT]:
+                flLeft = flRight = False
             if event.key == pygame.K_DOWN:
                 pressing_down = False
+    if flLeft:
+        f.move_x(-1)
+    elif flRight:
+        f.move_x(1)
     if counter % (fps // g) == 0 or pressing_down:
         f.move_y()
     if not f.islife:
@@ -205,6 +214,7 @@ while not game_over:
             dryness = 0
         else:
             dryness += 1
+
     pygame.display.flip()
     clock.tick(fps)
 pygame.quit()
