@@ -1,5 +1,8 @@
 import pygame
 import copy
+
+from nltk.metrics import scores
+
 from config import *
 from random import *
 
@@ -55,6 +58,7 @@ def check_break_lines(lst: list) -> list:
             for j in range(i, i + 10):
                 lst.remove(j)
             line_go_down(i, lst)
+
 
     return lst
 
@@ -143,12 +147,14 @@ display.fill(BACKGROUND_COLOR)
 
 list_of_blocks = []
 
+score = 0
+
 game_over = False
 clock = pygame.time.Clock()
 
 fps = 30
 
-score = 0
+SCORES_FONT = pygame.font.SysFont('arial', 40)
 
 count_of_broken_lines = 0
 count_of_figures = 1
@@ -160,11 +166,13 @@ next_figure = Figure(0, 0)
 counter = 0
 dryness = 0 if f.type == 0 else 1
 # g = 20
-
 pressing_down = False
 flLeft = flRight = False
 while not game_over:
     display.fill(BACKGROUND_COLOR)
+    scores_text = SCORES_FONT.render('Scores: ' + str(score), False, (255, 0, 0))
+    scores_rect = scores_text.get_rect()
+    display.blit(scores_text, scores_rect)
     counter += 1
     if counter > 100000:
         counter = 0
@@ -221,17 +229,17 @@ pygame.quit()
 
 # TODO:
 # 1) рисовать сетку каждый проход цикла done
-# 2) обработать коллизии (останавливать фигуры, удалять столбцы)
+# 2) обработать коллизии (останавливать фигуры, удалять столбцы) ДАН
 # 3) показывать следующую фигуру done
-# 4) начислять очки, изменять скорость
-# 5) подкрутить sql
+# 4) начислять очки, изменять скорость (работаем)
+# 5) подкрутить sql (?????)
 # 6) сделать меню и HUD
 
 
 # 7) добавить искуственный интеллект!!!!
 
 # extra:
-# - добавить музыку
+# - добавить музыку (какую нахуй музыку)
 # - добавить режим на время
 # - написать свой рандомайзер
 # - отображать засуху
