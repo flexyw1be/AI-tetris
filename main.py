@@ -2,10 +2,8 @@ import pygame
 import copy
 
 from nltk.metrics import scores
-
 from config import *
 from random import *
-
 
 
 class Menu():
@@ -48,19 +46,16 @@ def line_go_down(ind: int, lst: list) -> list:
     return lst
 
 
-def check_break_lines(lst: list) -> list:
+def check_break_lines(lst: list, g: int, score: int):
     lst = sorted(lst)
     for i in range(0, 191, 10):
-        print(i, i + 9)
-        if i + 9 in lst and i in lst:
-            print(lst.index(i + 9) - lst.index(i))
         if (i + 9 in lst and i in lst) and lst.index(i + 9) - lst.index(i) == 9:
             for j in range(i, i + 10):
                 lst.remove(j)
             line_go_down(i, lst)
-
-
-    return lst
+            score += 1
+            g = 1.75 + score//30 * 2
+    return lst, g, score
 
 
 class Figure:
@@ -139,7 +134,6 @@ class Figure:
 
 
 pygame.init()
-
 display = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('AI-Tetris')
 pygame.display.set_icon(ICON)
@@ -152,14 +146,12 @@ score = 0
 game_over = False
 clock = pygame.time.Clock()
 
-fps = 30
-
 SCORES_FONT = pygame.font.SysFont('arial', 40)
 
 count_of_broken_lines = 0
 count_of_figures = 1
 
-clock.tick(fps)
+clock.tick(FPS)
 g = 1.75
 f = Figure(0, 0)
 next_figure = Figure(0, 0)
@@ -173,9 +165,9 @@ while not game_over:
     scores_text = SCORES_FONT.render('Scores: ' + str(score), False, (255, 0, 0))
     scores_rect = scores_text.get_rect()
     display.blit(scores_text, scores_rect)
-    counter += 1
-    if counter > 100000:
-        counter = 0
+
+    counter = (counter + 1) % 100000
+
     for i in range(20):
         for j in range(10):
             draw_grid(j, i)
@@ -209,7 +201,7 @@ while not game_over:
         f.move_x(-1)
     elif flRight:
         f.move_x(1)
-    if counter % (fps // g) == 0 or pressing_down:
+    if counter % (FPS // g) == 0 or pressing_down:
         f.move_y()
     if not f.islife:
         list_of_blocks.extend(f.cords)
@@ -217,14 +209,14 @@ while not game_over:
         f = next_figure
         next_figure = Figure(0, 0)
         count_of_figures += 1
-        list_of_blocks = check_break_lines(list_of_blocks)
+        list_of_blocks, g, score = check_break_lines(list_of_blocks, g, score)
         if f.type == 0:
             dryness = 0
         else:
             dryness += 1
 
     pygame.display.flip()
-    clock.tick(fps)
+    clock.tick(FPS)
 pygame.quit()
 
 # TODO:
