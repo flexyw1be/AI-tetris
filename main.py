@@ -188,19 +188,21 @@ while not game_over:
                 pressing_down = True
             if event.key == pygame.K_LEFT:
                 flLeft = True
+                f.move_x(-1)
 
             elif event.key == pygame.K_RIGHT:
                 flRight = True
+                f.move_x(1)
 
         if event.type == pygame.KEYUP:
             if event.key in [pygame.K_LEFT, pygame.K_RIGHT]:
                 flLeft = flRight = False
             if event.key == pygame.K_DOWN:
                 pressing_down = False
-    if flLeft:
-        f.move_x(-1)
-    elif flRight:
-        f.move_x(1)
+    # if flLeft:
+    #     f.move_x(-1)
+    # elif flRight:
+    #     f.move_x(1)
     if counter % (FPS // g) == 0 or pressing_down:
         f.move_y()
     if not f.islife:
