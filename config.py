@@ -2,8 +2,9 @@ import pygame
 
 WIDTH = 700
 HEIGHT = 650
-FPS = 50
+FPS = 30
 BLOCK_SIZE = 30
+
 
 LEFT = 200
 TOP = 20
