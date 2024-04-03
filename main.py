@@ -146,10 +146,10 @@ score = 0
 game_over = False
 clock = pygame.time.Clock()
 
-SCORES_FONT = pygame.font.SysFont('arial', 40)
+SCORES_FONT = pygame.font.SysFont('Tahoma', 24)
 
 count_of_broken_lines = 0
-count_of_figures = 1
+count_of_figures = 0
 
 clock.tick(FPS)
 g = 1.75
@@ -160,11 +160,39 @@ dryness = 0 if f.type == 0 else 1
 # g = 20
 pressing_down = False
 flLeft = flRight = False
+type1 = type2= type3= type4= type5 =  type6= 0
 while not game_over:
     display.fill(BACKGROUND_COLOR)
-    scores_text = SCORES_FONT.render('Scores: ' + str(score), False, (255, 0, 0))
-    scores_rect = scores_text.get_rect()
-    display.blit(scores_text, scores_rect)
+    scores_text = SCORES_FONT.render('scores: ' + str(score), False, 'darkGrey')
+    figures_text = SCORES_FONT.render('figures: ' + str(count_of_figures), False, 'darkGrey')
+    lines_text = SCORES_FONT.render('lines: ' + str(count_of_broken_lines), False, 'darkGrey')
+
+    type1_text = SCORES_FONT.render('type 1: ' + str(type1), False, 'darkGrey')
+    type2_text = SCORES_FONT.render('type 2: ' + str(type2), False, 'darkGrey')
+    type3_text = SCORES_FONT.render('type 3: ' + str(type3), False, 'darkGrey')
+    type4_text = SCORES_FONT.render('type 4: ' + str(type4), False, 'darkGrey')
+    type5_text = SCORES_FONT.render('type 5: ' + str(type5), False, 'darkGrey')
+    type6_text = SCORES_FONT.render('type 6: ' + str(type6), False, 'darkGrey')
+
+
+    if dryness > 10:
+        dryness_text = SCORES_FONT.render('dryness: ' + str(dryness), False, (255, 0, 0))
+    else:
+        dryness_text = SCORES_FONT.render('dryness: ' + str(dryness), False, 'darkGrey')
+
+    # scores_rect = scores_text.get_rect()
+    display.blit(scores_text, (20, 20))
+    display.blit(figures_text, (20, 60))
+    display.blit(lines_text, (20, 100))
+    display.blit(dryness_text, (20, 140))
+
+    display.blit(type1_text, (20, 180))
+    display.blit(type2_text, (20, 210))
+    display.blit(type3_text, (20, 240))
+    display.blit(type4_text, (20, 270))
+    display.blit(type5_text, (20, 300))
+    display.blit(type6_text, (20, 330))
+
 
     counter = (counter + 1) % 100000
 
@@ -216,6 +244,19 @@ while not game_over:
             dryness = 0
         else:
             dryness += 1
+
+        if f.type == 1:
+            type1 +=1
+        elif f.type == 2:
+            type2 += 1
+        elif f.type == 3:
+            type3 += 1
+        elif f.type == 4:
+            type4 += 1
+        elif f.type == 5:
+            type5 += 1
+        elif f.type == 6:
+            type6 += 1
 
     pygame.display.flip()
     clock.tick(FPS)
