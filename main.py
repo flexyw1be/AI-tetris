@@ -8,7 +8,7 @@ from random import *
 
 class Menu():
     def __init__(self) -> None:
-        self.button_list = [MENU_FONT.render('Play', False, 'black'), MENU_FONT.render('Quit', False, 'black')]
+        self.button_list = [MENU_FONT.render('Play', True, 'black'), MENU_FONT.render('Quit', True, 'black')]
         self.running = True
         self.selected = 0
         self.show()
@@ -16,9 +16,13 @@ class Menu():
     def show(self):
         while self.running:
             display.fill(MENU_COLOR)
-            pygame.draw.rect(display, 'green', pygame.Rect(20, 15 + self.selected * 50, 100, 50))
+            pygame.draw.rect(display, 'darkGrey', pygame.Rect(20 + 300, 30 + self.selected * 60 + 100, 75, 50))
             for n, i in enumerate(self.button_list):
-                display.blit(i, (20, 40 * n + 20))
+                if n> 0:
+                    display.blit(i, (20 + 300, 100+40 * n + 50))
+                else:
+                    display.blit(i, (20+ 300, 100+40 * n + 30))
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
