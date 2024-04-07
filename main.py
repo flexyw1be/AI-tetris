@@ -18,10 +18,10 @@ class Menu():
             display.fill(MENU_COLOR)
             pygame.draw.rect(display, 'darkGrey', pygame.Rect(20 + 300, 30 + self.selected * 60 + 100, 75, 50))
             for n, i in enumerate(self.button_list):
-                if n> 0:
-                    display.blit(i, (20 + 300, 100+40 * n + 50))
+                if n > 0:
+                    display.blit(i, (20 + 300, 100 + 40 * n + 50))
                 else:
-                    display.blit(i, (20+ 300, 100+40 * n + 30))
+                    display.blit(i, (20 + 300, 100 + 40 * n + 30))
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -56,6 +56,7 @@ class Game():
 
         self.count_of_broken_lines = 0
         self.count_of_figures = 0
+        self.paussed = True
 
         self.clock.tick(FPS)
 
@@ -101,6 +102,8 @@ class Game():
                     if event.key == pygame.K_LEFT:
                         self.flLeft = True
                         self.f.move_x(-1, self.list_of_blocks)
+                    if event.key == pygame.K_ESCAPE:
+                        self.pause()
 
                     elif event.key == pygame.K_RIGHT:
                         self.flRight = True
@@ -126,8 +129,21 @@ class Game():
 
     def check_lose(self):
         for i in self.list_of_blocks:
-            if 4<= i<= 7:
+            if 4 <= i <= 7:
                 self.m = Menu()
+
+    def pause(self):
+        while self.paussed:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    exit()
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        self.paussed = not self.paussed
+
+            pygame.display.update()
+            self.clock.tick(FPS)
+        # pygame.quit()
 
 
 def draw_grid(x: int, y: int) -> None:
@@ -258,108 +274,6 @@ if __name__ == "__main__":
     MENU_FONT = pygame.font.SysFont('Tahoma', 40)
 
     g = Game()
-    # g.run()
-
-# g = 20
-# type1 = type2 = type3 = type4 = type5 = type6 = 0
-# while not game_over:
-#     display.fill(BACKGROUND_COLOR)
-#     scores_text = SCORES_FONT.render('scores: ' + str(score), False, 'darkGrey')
-#     figures_text = SCORES_FONT.render('figures: ' + str(count_of_figures), False, 'darkGrey')
-#     lines_text = SCORES_FONT.render('lines: ' + str(count_of_broken_lines), False, 'darkGrey')
-#
-#     type1_text = SCORES_FONT.render('type 1: ' + str(type1), False, 'darkGrey')
-#     type2_text = SCORES_FONT.render('type 2: ' + str(type2), False, 'darkGrey')
-#     type3_text = SCORES_FONT.render('type 3: ' + str(type3), False, 'darkGrey')
-#     type4_text = SCORES_FONT.render('type 4: ' + str(type4), False, 'darkGrey')
-#     type5_text = SCORES_FONT.render('type 5: ' + str(type5), False, 'darkGrey')
-#     type6_text = SCORES_FONT.render('type 6: ' + str(type6), False, 'darkGrey')
-#
-#     if dryness > 10:
-#         dryness_text = SCORES_FONT.render('dryness: ' + str(dryness), False, (255, 0, 0))
-#     else:
-#         dryness_text = SCORES_FONT.render('dryness: ' + str(dryness), False, 'darkGrey')
-#
-#     # scores_rect = scores_text.get_rect()
-#     display.blit(scores_text, (20, 20))
-#     display.blit(figures_text, (20, 60))
-#     display.blit(lines_text, (20, 100))
-#     display.blit(dryness_text, (20, 140))
-#
-#     display.blit(type1_text, (20, 180))
-#     display.blit(type2_text, (20, 210))
-#     display.blit(type3_text, (20, 240))
-#     display.blit(type4_text, (20, 270))
-#     display.blit(type5_text, (20, 300))
-#     display.blit(type6_text, (20, 330))
-#
-#     counter = (counter + 1) % 100000
-#
-#     for y in range(20):
-#         for x in range(10):
-#             draw_grid(x, y)
-#             if y * 10 + x in f.cords:
-#                 draw_figure(x, y, f.color)
-#             if y * 10 + x in next_figure.cords:
-#                 draw_figure(x + 8, y + 2, next_figure.color)
-#             if y * 10 + x in list_of_blocks:
-#                 draw_blocks(x, y)
-#
-#     for event in pygame.event.get():
-#         if event.type == pygame.QUIT:
-#             exit()
-#         elif event.type == pygame.KEYDOWN:
-#             if event.key == pygame.K_UP:
-#                 f.rotate_right()
-#             if event.key == pygame.K_DOWN:
-#                 pressing_down = True
-#             if event.key == pygame.K_LEFT:
-#                 flLeft = True
-#                 f.move_x(-1, list_of_blocks)
-#
-#             elif event.key == pygame.K_RIGHT:
-#                 flRight = True
-#                 f.move_x(1, list_of_blocks)
-#
-#         if event.type == pygame.KEYUP:
-#             if event.key in [pygame.K_LEFT, pygame.K_RIGHT]:
-#                 flLeft = flRight = False
-#             if event.key == pygame.K_DOWN:
-#                 pressing_down = False
-#     # if flLeft:
-#     #     f.move_x(-1)
-#     # elif flRight:
-#     #     f.move_x(1)
-#     if counter % (FPS // g) == 0 or pressing_down:
-#         f.move_y(list_of_blocks)
-#     if not f.life:
-#         list_of_blocks.extend(f.cords)
-#         list_of_blocks = list(set(list_of_blocks))
-#         f = next_figure
-#         next_figure = Figure(0, 0)
-#         count_of_figures += 1
-#         list_of_blocks, g, score = check_break_lines(list_of_blocks, g, score)
-#         if f.type == 0:
-#             dryness = 0
-#         else:
-#             dryness += 1
-#
-#         if f.type == 1:
-#             type1 += 1
-#         elif f.type == 2:
-#             type2 += 1
-#         elif f.type == 3:
-#             type3 += 1
-#         elif f.type == 4:
-#             type4 += 1
-#         elif f.type == 5:
-#             type5 += 1
-#         elif f.type == 6:
-#             type6 += 1
-#
-#     pygame.display.flip()
-#     clock.tick(FPS)
-# pygame.quit()
 
 # TODO:
 # 1) рисовать сетку каждый проход цикла done
