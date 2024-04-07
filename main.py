@@ -33,7 +33,7 @@ class Menu():
                     if event.key == pygame.K_UP:
                         if self.selected - 1 >= 0:
                             self.selected -= 1
-                    if event.key == pygame.K_SPACE:
+                    if event.key == pygame.K_RETURN:
                         if self.selected == 0:
                             self.running = 0
                         else:
@@ -56,9 +56,10 @@ class Game():
 
         self.count_of_broken_lines = 0
         self.count_of_figures = 0
-        self.paussed = True
+        self.paused = True
 
         self.clock.tick(FPS)
+        self.pause_text = MENU_FONT.render('Pause', True, 'black')
 
         self.g = 1.75
         self.f = Figure(0, 0)
@@ -69,7 +70,7 @@ class Game():
         self.pressing_down = False
         self.flLeft = self.flRight = False
 
-        self.scores_text = SCORES_FONT.render('scores: ' + str(self.score), False, 'darkGrey')
+        self.scores_text = SCORES_FONT.render('scores: ' + str(self.score), True, 'darkGrey')
         self.m = Menu()
         self.run()
 
@@ -77,7 +78,7 @@ class Game():
         while not self.game_over:
             display.fill(BACKGROUND_COLOR)
 
-            self.scores_text = SCORES_FONT.render('scores: ' + str(self.score), False, 'darkGrey')
+            self.scores_text = SCORES_FONT.render('scores: ' + str(self.score), True, 'darkGrey')
             display.blit(self.scores_text, (20, 20))
 
             self.counter = (self.counter + 1) % 100000
@@ -102,8 +103,9 @@ class Game():
                     if event.key == pygame.K_LEFT:
                         self.flLeft = True
                         self.f.move_x(-1, self.list_of_blocks)
-                    if event.key == pygame.K_ESCAPE:
+                    if event.key == pygame.K_SPACE:
                         self.pause()
+                        self.paused = True
 
                     elif event.key == pygame.K_RIGHT:
                         self.flRight = True
@@ -133,17 +135,18 @@ class Game():
                 self.m = Menu()
 
     def pause(self):
-        while self.paussed:
+        while self.paused:
+            display.fill(BACKGROUND_COLOR)
+            display.blit(self.pause_text, (300, 100))
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     exit()
                 elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
-                        self.paussed = not self.paussed
+                    if event.key == pygame.K_SPACE:
+                        self.paused = not self.paused
 
             pygame.display.update()
-            self.clock.tick(FPS)
-        # pygame.quit()
 
 
 def draw_grid(x: int, y: int) -> None:
@@ -176,7 +179,7 @@ def line_go_down(ind: int, lst: list) -> list:
     return lst
 
 
-def check_break_lines(lst: list, g: int, score: int) -> bool:
+def check_break_lines(lst: list, g: int, score: int):
     lst = sorted(lst)
     for i in range(0, 191, 10):
         if (i + 9 in lst and i in lst) and lst.index(i + 9) - lst.index(i) == 9:
