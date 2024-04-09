@@ -10,22 +10,27 @@ class Menu():
     def __init__(self) -> None:
         self.button_list = [MENU_FONT.render('Play', True, 'black'), MENU_FONT.render('Quit', True, 'black')]
         self.running = True
+        self.cur_text = SCORES_FONT.render('Press ENTER', True, 'darkgrey')
+
+
         self.selected = 0
         self.show()
 
     def show(self):
         while self.running:
             display.fill(MENU_COLOR)
-            pygame.draw.rect(display, 'darkGrey', pygame.Rect(20 + 300, 30 + self.selected * 60 + 100, 75, 50))
+            display.blit(self.cur_text, (295, 450))
+
+            pygame.draw.rect(display, 'darkGrey', pygame.Rect(20 + 300, 30 + self.selected * 60 + 300, 75, 50))
             for n, i in enumerate(self.button_list):
                 if n > 0:
-                    display.blit(i, (20 + 300, 100 + 40 * n + 50))
+                    display.blit(i, (20 + 300, 100 + 40 * n + 250))
                 else:
-                    display.blit(i, (20 + 300, 100 + 40 * n + 30))
+                    display.blit(i, (20 + 300, 100 + 40 * n + 230))
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    self.running = False
+                    pygame.quit()
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_DOWN:
                         if self.selected + 1 < len(self.button_list):
@@ -60,6 +65,8 @@ class Game():
 
         self.clock.tick(FPS)
         self.pause_text = MENU_FONT.render('Pause', True, 'black')
+        self.cur_text = MENU_FONT.render('Press ENTER', True, 'darkgrey')
+        self.space_text = SCORES_FONT.render('Press SPACE', True, 'darkgrey')
 
         self.g = 1.75
         self.f = Figure(0, 0)
@@ -73,6 +80,32 @@ class Game():
         self.scores_text = SCORES_FONT.render('scores: ' + str(self.score), True, 'darkGrey')
         self.m = Menu()
         self.run()
+
+    def start_game(self):
+        self.list_of_blocks = []
+        self.score = 0
+        self.game_over = False
+        self.clock = pygame.time.Clock()
+
+        self.count_of_broken_lines = 0
+        self.count_of_figures = 0
+        self.paused = True
+
+        self.clock.tick(FPS)
+        self.pause_text = MENU_FONT.render('Pause', True, 'black')
+        self.cur_text = MENU_FONT.render('Press ENTER', True, 'darkgrey')
+        self.space_text = SCORES_FONT.render('Press SPACE', True, 'darkgrey')
+
+        self.g = 1.75
+        self.f = Figure(0, 0)
+        self.next_figure = Figure(0, 0)
+        self.counter = 0
+        self.dryness = 0 if self.f.type == 0 else 1
+
+        self.pressing_down = False
+        self.flLeft = self.flRight = False
+
+        self.scores_text = SCORES_FONT.render('scores: ' + str(self.score), True, 'darkGrey')
 
     def run(self) -> None:
         while not self.game_over:
@@ -132,15 +165,18 @@ class Game():
     def check_lose(self):
         for i in self.list_of_blocks:
             if 4 <= i <= 7:
+                self.start_game()
                 self.m = Menu()
 
     def pause(self):
         while self.paused:
             display.fill(BACKGROUND_COLOR)
-            display.blit(self.pause_text, (300, 100))
+            display.blit(self.pause_text, (300, 250))
+            display.blit(self.space_text, (287, 300))
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
+                    pygame.quit()
                     exit()
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
@@ -187,7 +223,7 @@ def check_break_lines(lst: list, g: int, score: int):
                 lst.remove(j)
             line_go_down(i, lst)
             score += 1
-            g = 1.75 + score // 30 * 2
+            g = 1.75 + score // 30
     return lst, g, score
 
 
@@ -279,18 +315,14 @@ if __name__ == "__main__":
     g = Game()
 
 # TODO:
-# 1) рисовать сетку каждый проход цикла done
-# 2) обработать коллизии (останавливать фигуры, удалять столбцы) ДАН
-# 3) показывать следующую фигуру done
 # 4) начислять очки, изменять скорость (работаем)
 # 5) подкрутить sql (?????)
-# 6) сделать меню и HUD
 
 
 # 7) добавить искуственный интеллект!!!!
 
 # extra:
-# - добавить музыку (какую нахуй музыку)
+# - добавить музыку
 # - добавить режим на время
 # - написать свой рандомайзер
 # - отображать засуху
