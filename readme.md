@@ -2,7 +2,7 @@
 
 [![forthebadge made-with-python](http://ForTheBadge.com/images/badges/made-with-python.svg)](https://www.python.org/)
 
-### To use it, install a couple of libraries
+### install this modules to use it
 ```
 pip install pygame
 pip install SQLAlchemy
