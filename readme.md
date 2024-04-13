@@ -1,4 +1,4 @@
-# Tetris-game on pygame with AI based on genetic algorithm 
+# Tetris with AI based on genetic algorithm 
 
 [![forthebadge made-with-python](http://ForTheBadge.com/images/badges/made-with-python.svg)](https://www.python.org/)
 
