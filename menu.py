@@ -1,9 +1,12 @@
 from config import *
+from utility import *
 import pygame
 
 
 class Menu():
     def __init__(self, display) -> None:
+
+        self.logo = image_load(LOGO, (600, 174))
 
         self.button_list = [MENU_FONT.render('Play', True, 'black'), MENU_FONT.render('Quit', True, 'black')]
         self.running = True
@@ -15,6 +18,7 @@ class Menu():
     def show(self):
         while self.running:
             self.display.fill(MENU_COLOR)
+            self.display.blit(self.logo, (65, 70))
             self.display.blit(self.cur_text, (295, 450))
 
             pygame.draw.rect(self.display, 'darkGrey', pygame.Rect(20 + 300, 30 + self.selected * 60 + 300, 75, 50))

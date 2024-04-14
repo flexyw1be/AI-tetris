@@ -8,6 +8,8 @@ HEIGHT = 650
 FPS = 30
 BLOCK_SIZE = 30
 
+LOGO = "data/logo.jpg"
+
 LEFT = 200
 TOP = 20
 

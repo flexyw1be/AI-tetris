@@ -22,6 +22,7 @@ class Game():
         self.cur_text = MENU_FONT.render('Press ENTER', True, 'darkgrey')
         self.space_text = SCORES_FONT.render('Press SPACE', True, 'darkgrey')
 
+
         self.g = 1.75
         self.f = Figure(0, 0)
         self.next_figure = Figure(0, 0)
