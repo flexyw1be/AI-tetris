@@ -5,13 +5,6 @@ from menu import Menu
 from figure import Figure
 
 import pygame
-import copy
-
-
-class HUD():
-    def __init__(self) -> None:
-        pass
-
 
 class Game():
     def __init__(self) -> None:
