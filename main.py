@@ -1,50 +1,11 @@
+from config import *
+from random import randint
+
+from menu import Menu
+from figure import Figure
+
 import pygame
 import copy
-
-from nltk.metrics import scores
-from config import *
-from random import *
-
-
-class Menu():
-    def __init__(self) -> None:
-        self.button_list = [MENU_FONT.render('Play', True, 'black'), MENU_FONT.render('Quit', True, 'black')]
-        self.running = True
-        self.cur_text = SCORES_FONT.render('Press ENTER', True, 'darkgrey')
-
-
-        self.selected = 0
-        self.show()
-
-    def show(self):
-        while self.running:
-            display.fill(MENU_COLOR)
-            display.blit(self.cur_text, (295, 450))
-
-            pygame.draw.rect(display, 'darkGrey', pygame.Rect(20 + 300, 30 + self.selected * 60 + 300, 75, 50))
-            for n, i in enumerate(self.button_list):
-                if n > 0:
-                    display.blit(i, (20 + 300, 100 + 40 * n + 250))
-                else:
-                    display.blit(i, (20 + 300, 100 + 40 * n + 230))
-
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_DOWN:
-                        if self.selected + 1 < len(self.button_list):
-                            self.selected += 1
-                    if event.key == pygame.K_UP:
-                        if self.selected - 1 >= 0:
-                            self.selected -= 1
-                    if event.key == pygame.K_RETURN:
-                        if self.selected == 0:
-                            self.running = 0
-                        else:
-                            quit()
-            pygame.display.flip()
-        # pygame.quit()
 
 
 class HUD():
@@ -78,7 +39,7 @@ class Game():
         self.flLeft = self.flRight = False
 
         self.scores_text = SCORES_FONT.render('scores: ' + str(self.score), True, 'darkGrey')
-        self.m = Menu()
+        self.m = Menu(display)
         self.run()
 
     def start_game(self):
@@ -166,7 +127,7 @@ class Game():
         for i in self.list_of_blocks:
             if 4 <= i <= 7:
                 self.start_game()
-                self.m = Menu()
+                self.m = Menu(display)
 
     def pause(self):
         while self.paused:
@@ -227,90 +188,15 @@ def check_break_lines(lst: list, g: int, score: int):
     return lst, g, score
 
 
-class Figure:
-
-    def __init__(self, x: int, y: int) -> None:
-        self.x, self.y = x, y
-        self.type = 0
-        self.set_type()
-        self.color = COLORS[self.type]
-        self.rotation = randint(0, len(FIGURES[self.type]) - 1)
-        self.cords = copy.deepcopy(FIGURES[self.type][self.rotation])
-        self.life = True
-
-    def set_type(self) -> None:
-        self.type = randint(0, len(FIGURES) - 1)
-
-    def move_y(self, lst: list) -> None:
-        if not self.check_y(1, lst):
-            return
-        self.y += 1
-        self.update()
-
-    def rotate_right(self, lst) -> None:
-        old_rotation = self.rotation
-        self.rotation = (self.rotation + 1) % len(FIGURES[self.type])
-
-        self.cords = copy.deepcopy(FIGURES[self.type][self.rotation])
-        if not self.intersects(lst, self.cords) or not self.check_rotate():
-            self.rotation = old_rotation
-            self.cords = copy.deepcopy(FIGURES[self.type][self.rotation])
-
-        self.update()
-
-    def update(self) -> None:
-        for n in range(len(self.cords)):
-            self.cords[n] = 10 * self.y + self.x + copy.deepcopy(FIGURES[self.type][self.rotation][n])
-
-    def intersects(self, lst: list, cords: list) -> bool:
-        for cord in cords:
-            if cord + 10 * self.y + self.x in lst:
-                return False
-        return True
-
-    def check_rotate(self) -> bool:
-        for cord in self.cords:
-            if self.x + cord % 10 < 0 or self.x + cord % 10 > 9:
-                return False
-        return True
-
-    def check_x(self, x: int, lst: list) -> bool:
-        for cord in self.cords:
-            if cord % 10 + x > 9 or cord % 10 + x < 0 or cord + x in lst:
-                return False
-        return True
-
-    def check_y(self, y: int, lst: list) -> bool:
-        for cord in self.cords:
-            if (cord // 10 + y) // 20 >= 1 or cord + 10 * y in lst:
-                self.add_block(lst, cord)
-                self.life = False
-                return False
-        return True
-
-    def move_x(self, x: int, lst: list) -> None:
-        if not self.check_x(x, lst):
-            return
-        self.x += x
-        self.update()
-
-    def add_block(self, lst: list, block: int) -> list:
-        lst.append(block)
-        return lst
-
-    def __str__(self) -> str:
-        return f'{self.cords}'
-
-
 if __name__ == "__main__":
     pygame.init()
     display = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption('AI-Tetris')
     pygame.display.set_icon(ICON)
     display.fill(BACKGROUND_COLOR)
-
-    SCORES_FONT = pygame.font.SysFont('Tahoma', 24)
-    MENU_FONT = pygame.font.SysFont('Tahoma', 40)
+    #
+    # SCORES_FONT = pygame.font.SysFont('Tahoma', 24)
+    # MENU_FONT = pygame.font.SysFont('Tahoma', 40)
 
     g = Game()
 
