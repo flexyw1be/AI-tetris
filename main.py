@@ -35,8 +35,11 @@ class Game:
 
         self.scores_text = SCORES_FONT.render('scores: ' + str(self.score), True, 'darkGrey')
         self.m = Menu(display)
-        print(self.m)
-        self.run()
+        print(self.m.mode)
+        if self.m.mode == 0:
+            self.ai_mode()
+        else:
+            self.run()
 
     def start_game(self):
         self.list_of_blocks = []
@@ -123,9 +126,11 @@ class Game:
     def ai_mode(self):
         while not self.game_over:
             display.fill(BACKGROUND_COLOR)
-
+            print(self.f.cords)
+            self.counter = (self.counter + 1) % 100000
             self.scores_text = SCORES_FONT.render('scores: ' + str(self.score), True, 'darkGrey')
             display.blit(self.scores_text, (20, 20))
+
             for y in range(20):
                 for x in range(10):
                     draw_grid(x, y)
@@ -135,9 +140,23 @@ class Game:
                         draw_figure(x + 8, y + 2, self.next_figure.color)
                     if y * 10 + x in self.list_of_blocks:
                         draw_blocks(x, y)
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    exit()
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE:
+                        self.pause()
+                        self.paused = True
+                    if event.key == pygame.K_LEFT:
+                        self.flLeft = True
+                        self.f.move_x(-1, self.list_of_blocks)
+                    if event.key == pygame.K_RIGHT:
+                        self.flLeft = True
+                        self.f.move_x(1, self.list_of_blocks)
+
             self.check_lose()
-            if self.counter % (FPS // self.g) == 0 or self.pressing_down:
-                self.f.move_y(self.list_of_blocks)
+            # if self.counter % (FPS // self.g) == 0 or self.pressing_down:
+            #     self.f.move_y(self.list_of_blocks)
             if not self.f.life:
                 self.list_of_blocks.extend(self.f.cords)
                 self.list_of_blocks = list(set(self.list_of_blocks))
@@ -148,7 +167,6 @@ class Game:
             pygame.display.flip()
             self.clock.tick(FPS)
         pygame.quit()
-
 
     def check_lose(self):
         for i in self.list_of_blocks:
@@ -162,7 +180,7 @@ class Game:
             display.fill(BACKGROUND_COLOR)
             display.blit(self.pause_text, (300, 250))
             display.blit(self.space_text, (287, 300))
-            display.blit(self.home_text, (227,335))
+            display.blit(self.home_text, (227, 335))
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
