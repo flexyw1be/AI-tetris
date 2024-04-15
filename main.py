@@ -1,12 +1,13 @@
 from config import *
-from random import randint
 
 from menu import Menu
 from figure import Figure
+from finish import Finish
 
 import pygame
 
-class Game():
+
+class Game:
     def __init__(self) -> None:
         self.list_of_blocks = []
         self.score = 0
@@ -21,7 +22,6 @@ class Game():
         self.pause_text = MENU_FONT.render('Pause', True, 'black')
         self.cur_text = MENU_FONT.render('Press ENTER', True, 'darkgrey')
         self.space_text = SCORES_FONT.render('Press SPACE', True, 'darkgrey')
-
 
         self.g = 1.75
         self.f = Figure(0, 0)
@@ -120,6 +120,7 @@ class Game():
     def check_lose(self):
         for i in self.list_of_blocks:
             if 4 <= i <= 7:
+                self.f = Finish(display, self.score)
                 self.start_game()
                 self.m = Menu(display)
 
@@ -188,17 +189,10 @@ if __name__ == "__main__":
     pygame.display.set_caption('AI-Tetris')
     pygame.display.set_icon(ICON)
     display.fill(BACKGROUND_COLOR)
-    #
-    # SCORES_FONT = pygame.font.SysFont('Tahoma', 24)
-    # MENU_FONT = pygame.font.SysFont('Tahoma', 40)
-
     g = Game()
 
 # TODO:
-# 4) начислять очки, изменять скорость (работаем)
 # 5) подкрутить sql (?????)
-
-
 # 7) добавить искуственный интеллект!!!!
 
 # extra:

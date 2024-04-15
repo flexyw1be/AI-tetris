@@ -3,12 +3,13 @@ from utility import *
 import pygame
 
 
-class Menu():
+class Menu:
     def __init__(self, display) -> None:
 
         self.logo = image_load(LOGO, (600, 174))
 
-        self.button_list = [MENU_FONT.render('Play', True, 'black'), MENU_FONT.render('Quit', True, 'black')]
+        self.button_list = [MENU_FONT.render('AI mode', True, 'black'), MENU_FONT.render('Play', True, 'black'),
+                            MENU_FONT.render('Quit', True, 'black')]
         self.running = True
         self.cur_text = SCORES_FONT.render('Press ENTER', True, 'darkgrey')
         self.display = display
@@ -19,18 +20,17 @@ class Menu():
         while self.running:
             self.display.fill(MENU_COLOR)
             self.display.blit(self.logo, (65, 70))
-            self.display.blit(self.cur_text, (295, 450))
+            self.display.blit(self.cur_text, (270, 430))
 
-            pygame.draw.rect(self.display, 'darkGrey', pygame.Rect(20 + 300, 30 + self.selected * 60 + 300, 75, 50))
+            pygame.draw.rect(self.display, 'SpringGreen', pygame.Rect(250, 270 + self.selected * 50 + 5, 40, 40))
+            pygame.draw.rect(self.display, 'black', pygame.Rect(250, 270 + self.selected * 50 + 5, 40, 40), 3)
+
             for n, i in enumerate(self.button_list):
-                if n > 0:
-                    self.display.blit(i, (20 + 300, 100 + 40 * n + 250))
-                else:
-                    self.display.blit(i, (20 + 300, 100 + 40 * n + 230))
+                self.display.blit(i, (300, 270 + 50 * n))
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    pygame.quit()
+                    exit()
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_DOWN:
                         if self.selected + 1 < len(self.button_list):
@@ -39,8 +39,10 @@ class Menu():
                         if self.selected - 1 >= 0:
                             self.selected -= 1
                     if event.key == pygame.K_RETURN:
-                        if self.selected == 0:
+                        if self.selected == 1:
                             self.running = 0
+                        elif self.selected == 0:
+                            pass
                         else:
                             quit()
             pygame.display.flip()
