@@ -22,6 +22,7 @@ class Game:
         self.pause_text = MENU_FONT.render('Pause', True, 'black')
         self.cur_text = MENU_FONT.render('Press ENTER', True, 'darkgrey')
         self.space_text = SCORES_FONT.render('Press SPACE', True, 'darkgrey')
+        self.home_text = SCORES_FONT.render('Press ESCAPE to HOME', True, 'darkgrey')
 
         self.g = 1.75
         self.f = Figure(0, 0)
@@ -47,6 +48,7 @@ class Game:
         self.paused = True
 
         self.clock.tick(FPS)
+        self.home_text = SCORES_FONT.render('Press ESCAPE to HOME', True, 'darkgrey')
         self.pause_text = MENU_FONT.render('Pause', True, 'black')
         self.cur_text = MENU_FONT.render('Press ENTER', True, 'darkgrey')
         self.space_text = SCORES_FONT.render('Press SPACE', True, 'darkgrey')
@@ -129,6 +131,7 @@ class Game:
             display.fill(BACKGROUND_COLOR)
             display.blit(self.pause_text, (300, 250))
             display.blit(self.space_text, (287, 300))
+            display.blit(self.home_text, (227,335))
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -137,6 +140,10 @@ class Game:
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
                         self.paused = not self.paused
+                    elif event.key == pygame.K_ESCAPE:
+                        self.m = Menu(display)
+                        self.start_game()
+                        self.run()
 
             pygame.display.update()
 
@@ -193,7 +200,8 @@ if __name__ == "__main__":
 
 # TODO:
 # 5) подкрутить sql (?????)
-# 7) добавить искуственный интеллект!!!!
+
+# 7) добавить искуственный интеллект!!!! (eazy)
 
 # extra:
 # - добавить музыку

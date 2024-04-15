@@ -5,6 +5,6 @@
 ### install this modules to use it
 ```
 pip install pygame
-pip install SQLAlchemy
+pip install peewee
 ```
 
