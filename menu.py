@@ -15,6 +15,7 @@ class Menu:
         self.display = display
         self.selected = 0
         self.show()
+        self.mode = 1
 
     def show(self):
         while self.running:
@@ -39,10 +40,12 @@ class Menu:
                         if self.selected - 1 >= 0:
                             self.selected -= 1
                     if event.key == pygame.K_RETURN:
+                        self.running = False
                         if self.selected == 1:
-                            self.running = 0
+                            self.mode = 1
                         elif self.selected == 0:
-                            pass
+                            self.mode = 0
                         else:
                             quit()
             pygame.display.flip()
+        return self.mode

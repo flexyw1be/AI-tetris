@@ -35,6 +35,7 @@ class Game:
 
         self.scores_text = SCORES_FONT.render('scores: ' + str(self.score), True, 'darkGrey')
         self.m = Menu(display)
+        print(self.m)
         self.run()
 
     def start_game(self):
@@ -118,6 +119,36 @@ class Game:
             pygame.display.flip()
             self.clock.tick(FPS)
         pygame.quit()
+
+    def ai_mode(self):
+        while not self.game_over:
+            display.fill(BACKGROUND_COLOR)
+
+            self.scores_text = SCORES_FONT.render('scores: ' + str(self.score), True, 'darkGrey')
+            display.blit(self.scores_text, (20, 20))
+            for y in range(20):
+                for x in range(10):
+                    draw_grid(x, y)
+                    if y * 10 + x in self.f.cords:
+                        draw_figure(x, y, self.f.color)
+                    if y * 10 + x in self.next_figure.cords:
+                        draw_figure(x + 8, y + 2, self.next_figure.color)
+                    if y * 10 + x in self.list_of_blocks:
+                        draw_blocks(x, y)
+            self.check_lose()
+            if self.counter % (FPS // self.g) == 0 or self.pressing_down:
+                self.f.move_y(self.list_of_blocks)
+            if not self.f.life:
+                self.list_of_blocks.extend(self.f.cords)
+                self.list_of_blocks = list(set(self.list_of_blocks))
+                self.f = self.next_figure
+                self.next_figure = Figure(0, 0)
+                self.count_of_figures += 1
+                self.list_of_blocks, self.g, self.score = check_break_lines(self.list_of_blocks, self.g, self.score)
+            pygame.display.flip()
+            self.clock.tick(FPS)
+        pygame.quit()
+
 
     def check_lose(self):
         for i in self.list_of_blocks:
