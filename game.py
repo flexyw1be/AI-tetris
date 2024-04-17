@@ -175,6 +175,10 @@ class Game:
                 self.f = Finish(self.display, self.score)
                 self.start_game()
                 self.m = Menu(self.display)
+                if self.m.mode == 0:
+                    self.ai_mode()
+                else:
+                    self.run()
 
     def pause(self):
         while self.paused:
@@ -193,6 +197,9 @@ class Game:
                     elif event.key == pygame.K_ESCAPE:
                         self.m = Menu(self.display)
                         self.start_game()
-                        self.run()
+                        if self.m.mode == 0:
+                            self.ai_mode()
+                        else:
+                            self.run()
 
             pygame.display.update()
