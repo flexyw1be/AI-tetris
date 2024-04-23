@@ -1,3 +1,5 @@
+from random import choice
+
 from config import *
 
 from menu import Menu
@@ -38,6 +40,7 @@ class Game:
         self.m = Menu(self.display)
         print(self.m.mode)
         if self.m.mode == 0:
+            self.get_pos()
             self.ai_mode()
         else:
             self.run()
@@ -69,13 +72,35 @@ class Game:
 
         self.scores_text = SCORES_FONT.render('scores: ' + str(self.score), True, 'darkGrey')
 
+    def events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                exit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP:
+                    self.f.rotate_right(self.list_of_blocks)
+                if event.key == pygame.K_DOWN:
+                    self.pressing_down = True
+                if event.key == pygame.K_LEFT:
+                    self.flLeft = True
+                    self.f.move_x(-1, self.list_of_blocks)
+                if event.key == pygame.K_SPACE:
+                    self.pause()
+                    self.paused = True
+
+                elif event.key == pygame.K_RIGHT:
+                    self.flRight = True
+                    self.f.move_x(1, self.list_of_blocks)
+            if event.type == pygame.KEYUP:
+                if event.key in [pygame.K_LEFT, pygame.K_RIGHT]:
+                    self.flLeft = self.flRight = False
+                if event.key == pygame.K_DOWN:
+                    self.pressing_down = False
+
     def run(self) -> None:
         while not self.game_over:
             self.display.fill(BACKGROUND_COLOR)
-
-            self.scores_text = SCORES_FONT.render('scores: ' + str(self.score), True, 'darkGrey')
-            self.display.blit(self.scores_text, (20, 20))
-
+            self.hud()
             self.counter = (self.counter + 1) % 100000
 
             for y in range(20):
@@ -87,32 +112,10 @@ class Game:
                         draw_figure(self.display, x + 8, y + 2, self.next_figure.color)
                     if y * 10 + x in self.list_of_blocks:
                         draw_blocks(self.display, x, y)
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    exit()
-                elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_UP:
-                        self.f.rotate_right(self.list_of_blocks)
-                    if event.key == pygame.K_DOWN:
-                        self.pressing_down = True
-                    if event.key == pygame.K_LEFT:
-                        self.flLeft = True
-                        self.f.move_x(-1, self.list_of_blocks)
-                    if event.key == pygame.K_SPACE:
-                        self.pause()
-                        self.paused = True
-
-                    elif event.key == pygame.K_RIGHT:
-                        self.flRight = True
-                        self.f.move_x(1, self.list_of_blocks)
-                if event.type == pygame.KEYUP:
-                    if event.key in [pygame.K_LEFT, pygame.K_RIGHT]:
-                        self.flLeft = self.flRight = False
-                    if event.key == pygame.K_DOWN:
-                        self.pressing_down = False
+            self.events()
             self.check_lose()
             if self.counter % (FPS // self.g) == 0 or self.pressing_down:
-                self.f.move_y(self.list_of_blocks)
+                self.f.move_y(self.list_of_blocks, True)
             if not self.f.life:
                 self.list_of_blocks.extend(self.f.cords)
                 self.list_of_blocks = list(set(self.list_of_blocks))
@@ -123,14 +126,17 @@ class Game:
             pygame.display.flip()
             self.clock.tick(FPS)
         pygame.quit()
+
+    def hud(self):
+        self.scores_text = SCORES_FONT.render('scores: ' + str(self.score), True, 'darkGrey')
+        self.display.blit(self.scores_text, (20, 20))
 
     def ai_mode(self):
         while not self.game_over:
             self.display.fill(BACKGROUND_COLOR)
-            print(self.f.cords)
             self.counter = (self.counter + 1) % 100000
-            self.scores_text = SCORES_FONT.render('scores: ' + str(self.score), True, 'darkGrey')
-            self.display.blit(self.scores_text, (20, 20))
+            self.hud()
+            self.pressing_down = True
 
             for y in range(20):
                 for x in range(10):
@@ -141,23 +147,11 @@ class Game:
                         draw_figure(self.display, x + 8, y + 2, self.next_figure.color)
                     if y * 10 + x in self.list_of_blocks:
                         draw_blocks(self.display, x, y)
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    exit()
-                elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_SPACE:
-                        self.pause()
-                        self.paused = True
-                    if event.key == pygame.K_LEFT:
-                        self.flLeft = True
-                        self.f.move_x(-1, self.list_of_blocks)
-                    if event.key == pygame.K_RIGHT:
-                        self.flLeft = True
-                        self.f.move_x(1, self.list_of_blocks)
-
+            self.events()
+            # self.get_pos()
             self.check_lose()
-            # if self.counter % (FPS // self.g) == 0 or self.pressing_down:
-            #     self.f.move_y(self.list_of_blocks)
+            if self.counter % (FPS // self.g) == 0 or self.pressing_down:
+                self.f.move_y(self.list_of_blocks, True)
             if not self.f.life:
                 self.list_of_blocks.extend(self.f.cords)
                 self.list_of_blocks = list(set(self.list_of_blocks))
@@ -165,9 +159,24 @@ class Game:
                 self.next_figure = Figure(0, 0)
                 self.count_of_figures += 1
                 self.list_of_blocks, self.g, self.score = check_break_lines(self.list_of_blocks, self.g, self.score)
+                self.get_pos()
             pygame.display.flip()
             self.clock.tick(FPS)
         pygame.quit()
+
+    def get_pos(self):
+        scores = []
+        lst = self.list_of_blocks
+        moves = []
+        for j in range(10):
+            self.list_of_blocks = lst
+            for i in range(20, -1, -1):
+                if self.f.check_y(i, self.list_of_blocks, False):
+                    moves.append((j, i))
+            self.f.move_x(1, self.list_of_blocks)
+        m = choice(moves)
+        self.f.move_x(m[0] - self.f.x, self.list_of_blocks)
+
 
     def check_lose(self):
         for i in self.list_of_blocks:
