@@ -167,15 +167,8 @@ class Game:
     def get_pos(self):
         scores = []
         lst = self.list_of_blocks
-        moves = []
-        for j in range(10):
-            self.list_of_blocks = lst
-            for i in range(20, -1, -1):
-                if self.f.check_y(i, self.list_of_blocks, False):
-                    moves.append((j, i))
-            self.f.move_x(1, self.list_of_blocks)
-        m = choice(moves)
-        self.f.move_x(m[0] - self.f.x, self.list_of_blocks)
+        x = randint(-5, 5)
+        self.f.move_x(x,self.list_of_blocks)
 
 
     def check_lose(self):
