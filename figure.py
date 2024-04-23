@@ -53,9 +53,15 @@ class Figure:
 
     def check_x(self, x: int, lst: list):
         for cord in self.cords:
-            if cord + x in lst or cord%10 + x < 0 or cord%10 + x > 9:
+            if cord + x in lst or cord % 10 + x < 0 or cord % 10 + x > 9:
                 return 0
         return x
+
+    def check_ai(self, y, lst):
+        for cord in self.cords:
+            if cord + 10 * y in lst or (cord // 10 + y) // 20 >= 1:
+                return False
+        return True
 
     def check_y(self, y: int, lst: list) -> bool:
         for cord in self.cords:

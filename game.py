@@ -6,6 +6,7 @@ from menu import Menu
 from figure import Figure
 from finish import Finish
 from utility import *
+import copy
 
 
 class Game:
@@ -166,24 +167,35 @@ class Game:
 
     def get_pos(self):
         scores = []
-        lst = self.list_of_blocks
         moves = []
         for rot in range(len(FIGURES[self.f.type]) + 1):
             self.f.rotate_right(self.list_of_blocks)
             cords = [cord % 10 for cord in self.f.cords]
+            y = self.f.y
             l = min(cords)
             r = max(cords)
             self.f.move_x(-l, self.list_of_blocks)
-            for _ in range(l+r):
-                moves.append([self.f.cords, self.f.x])
+            for _ in range(l + r):
+                lst = copy.deepcopy(self.list_of_blocks)
+                lst = self.get_list(lst)
                 self.f.move_x(1, self.list_of_blocks)
-        cords, x = choice(moves)
-        print(moves)
-        self.f.cords = cords
-        self.f.x = x
-        self.f.update()
+                print(self.list_of_blocks)
+        # cords, x = choice(moves)
+        # print(moves)
+        # self.f.cords = cords
+        # self.f.x = x
+        # self.f.update()
         # self.f.move_x(x, self.list_of_blocks)
 
+    def get_list(self, lst):
+        cords = self.f.cords
+        for y in range(20, -1, -1):
+            if self.f.check_ai(y, self.list_of_blocks):
+                for i in range(len(cords)):
+                    cords[i] += 10 * y
+                break
+        lst.append(cords)
+        return lst
     def check_lose(self):
         for i in self.list_of_blocks:
             if 0 <= i <= 10:
