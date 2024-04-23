@@ -19,7 +19,7 @@ class Figure:
         self.type = randint(0, len(FIGURES) - 1)
 
     def move_y(self, lst: list, f) -> None:
-        if not self.check_y(1, lst, f):
+        if not self.check_y(1, lst):
             return
         self.y += 1
         self.update()
@@ -52,26 +52,18 @@ class Figure:
         return True
 
     def check_x(self, x: int, lst: list):
-        if x < 0:
-            mx = min([cord % 10 for cord in self.cords])
-            for cord in self.cords:
-                if cord + x in lst:
-                    return 0
-            return max(-mx, x)
-        else:
-            mx = max([cord % 10 for cord in self.cords])
-            for cord in self.cords:
-                if cord + x in lst:
-                    return 0
-        return min(9 - mx, x)
-
-    def check_y(self, y: int, lst: list, f) -> bool:
         for cord in self.cords:
-            if cord + 10 * y in lst and f:
+            if cord + x in lst or cord%10 + x < 0 or cord%10 + x > 9:
+                return 0
+        return x
+
+    def check_y(self, y: int, lst: list) -> bool:
+        for cord in self.cords:
+            if cord + 10 * y in lst:
                 self.add_block(lst, cord)
                 self.life = False
                 return False
-            if (cord // 10 + y) // 20 >= 1 and f:
+            if (cord // 10 + y) // 20 >= 1:
                 self.add_block(lst, cord)
                 self.life = False
                 return False

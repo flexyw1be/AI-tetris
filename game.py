@@ -167,13 +167,26 @@ class Game:
     def get_pos(self):
         scores = []
         lst = self.list_of_blocks
-        x = randint(-5, 5)
-        self.f.move_x(x,self.list_of_blocks)
-
+        moves = []
+        for rot in range(len(FIGURES[self.f.type]) + 1):
+            self.f.rotate_right(self.list_of_blocks)
+            cords = [cord % 10 for cord in self.f.cords]
+            l = min(cords)
+            r = max(cords)
+            self.f.move_x(-l, self.list_of_blocks)
+            for _ in range(l+r):
+                moves.append([self.f.cords, self.f.x])
+                self.f.move_x(1, self.list_of_blocks)
+        cords, x = choice(moves)
+        print(moves)
+        self.f.cords = cords
+        self.f.x = x
+        self.f.update()
+        # self.f.move_x(x, self.list_of_blocks)
 
     def check_lose(self):
         for i in self.list_of_blocks:
-            if 4 <= i <= 7:
+            if 0 <= i <= 10:
                 self.f = Finish(self.display, self.score)
                 self.start_game()
                 self.m = Menu(self.display)
