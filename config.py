@@ -5,7 +5,6 @@ pygame.init()
 SCORES_FONT = pygame.font.SysFont('Tahoma', 24)
 MENU_FONT = pygame.font.SysFont('Tahoma', 40)
 
-
 WIDTH = 700
 HEIGHT = 650
 FPS = 30

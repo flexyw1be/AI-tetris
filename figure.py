@@ -53,8 +53,9 @@ class Figure:
 
     def check_x(self, x: int, lst: list):
         for cord in self.cords:
+            print(cord)
             if cord + x in lst or cord % 10 + x < 0 or cord % 10 + x > 9:
-                return 0
+                return False
         return x
 
     def check_ai(self, y, lst):
@@ -76,7 +77,8 @@ class Figure:
         return True
 
     def move_x(self, x: int, lst: list) -> None:
-        x = self.check_x(x, lst)
+        if not self.check_x(x, lst):
+            return
         self.x += x
         self.update()
 

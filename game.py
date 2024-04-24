@@ -6,6 +6,7 @@ from menu import Menu
 from figure import Figure
 from finish import Finish
 from utility import *
+from ai import get_score
 import copy
 
 
@@ -165,37 +166,45 @@ class Game:
             self.clock.tick(FPS)
         pygame.quit()
 
+    def get_blocks_list(self):
+        lst = copy.deepcopy(self.list_of_blocks)
+        return lst
+
     def get_pos(self):
         scores = []
         moves = []
-        for rot in range(len(FIGURES[self.f.type]) + 1):
-            self.f.rotate_right(self.list_of_blocks)
-            cords = [cord % 10 for cord in self.f.cords]
-            y = self.f.y
-            l = min(cords)
-            r = max(cords)
+        lst = self.get_blocks_list()
+        for rot in range(len(FIGURES[self.f.type])):
+            self.f.x = 0
+            self.f.rotation = rot
+            self.f.update()
+            l = min([cord % 10 for cord in self.f.cords])
             self.f.move_x(-l, self.list_of_blocks)
-            for _ in range(l + r):
-                lst = copy.deepcopy(self.list_of_blocks)
-                lst = self.get_list(lst)
+            for j in range(10):
+                lst = self.get_list(self.get_blocks_list())
+                print(lst, self.f.type)
+                scores.append([rot, self.f.x, get_score(lst, self.f.cords)])
                 self.f.move_x(1, self.list_of_blocks)
-                print(self.list_of_blocks)
-        # cords, x = choice(moves)
-        # print(moves)
-        # self.f.cords = cords
+        print(max(scores, key=lambda x: x[2]))
+        print(scores)
+        rot, x, score = max(scores, key=lambda x: x[2])
+        self.f.rotation = rot
+        self.f.x = x
+        self.f.update()
         # self.f.x = x
         # self.f.update()
-        # self.f.move_x(x, self.list_of_blocks)
+        # self.f.move_x(x - self.f.x, self.list_of_blocks)
 
     def get_list(self, lst):
-        cords = self.f.cords
+        cords = copy.deepcopy(self.f.cords)
         for y in range(20, -1, -1):
-            if self.f.check_ai(y, self.list_of_blocks):
-                for i in range(len(cords)):
-                    cords[i] += 10 * y
+            if self.f.check_ai(y, lst):
                 break
-        lst.append(cords)
+        for i in range(len(cords)):
+            cords[i] += 10 * y
+        lst.extend(cords)
         return lst
+
     def check_lose(self):
         for i in self.list_of_blocks:
             if 0 <= i <= 10:
