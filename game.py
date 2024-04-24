@@ -163,7 +163,7 @@ class Game:
                 self.list_of_blocks, self.g, self.score = check_break_lines(self.list_of_blocks, self.g, self.score)
                 self.get_pos()
             pygame.display.flip()
-            self.clock.tick(FPS)
+            self.clock.tick(60)
         pygame.quit()
 
     def get_blocks_list(self):
@@ -181,12 +181,11 @@ class Game:
             l = min([cord % 10 for cord in self.f.cords])
             self.f.move_x(-l, self.list_of_blocks)
             for j in range(10):
-                lst = self.get_list(self.get_blocks_list())
+                lst, y = self.get_list(self.get_blocks_list())
                 print(lst, self.f.type)
-                scores.append([rot, self.f.x, get_score(lst, self.f.cords)])
+                scores.append([rot, self.f.x, get_score(lst, self.f.cords, y)])
                 self.f.move_x(1, self.list_of_blocks)
-        print(max(scores, key=lambda x: x[2]))
-        print(scores)
+        print("ФИГУРА:", max(scores, key=lambda x: x[2]))
         rot, x, score = max(scores, key=lambda x: x[2])
         self.f.rotation = rot
         self.f.x = x
@@ -203,14 +202,14 @@ class Game:
         for i in range(len(cords)):
             cords[i] += 10 * y
         lst.extend(cords)
-        return lst
+        return lst, y
 
     def check_lose(self):
         for i in self.list_of_blocks:
             if 0 <= i <= 10:
                 self.f = Finish(self.display, self.score)
                 self.start_game()
-                self.m = Menu(self.display)
+                # self.m = Menu(self.display)
                 if self.m.mode == 0:
                     self.ai_mode()
                 else:
