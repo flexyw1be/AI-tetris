@@ -1,5 +1,6 @@
 from random import choice
 
+
 from config import *
 
 from menu import Menu
@@ -12,7 +13,6 @@ import copy
 
 class Game:
     def __init__(self, display) -> None:
-
         self.display = display
         self.list_of_blocks = []
         self.score = 0
@@ -48,6 +48,7 @@ class Game:
             self.run()
 
     def start_game(self):
+        pygame.mixer.music.play(-1)
         self.list_of_blocks = []
         self.score = 0
         self.game_over = False
@@ -87,6 +88,7 @@ class Game:
                     self.flLeft = True
                     self.f.move_x(-1, self.list_of_blocks)
                 if event.key == pygame.K_SPACE:
+                    pygame.mixer.music.pause()
                     self.pause()
                     self.paused = True
 
@@ -104,7 +106,6 @@ class Game:
             self.display.fill(BACKGROUND_COLOR)
             self.hud()
             self.counter = (self.counter + 1) % 100000
-
             for y in range(20):
                 for x in range(10):
                     draw_grid(self.display, x, y)
@@ -229,6 +230,7 @@ class Game:
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
                         self.paused = not self.paused
+                        pygame.mixer.music.unpause()
                     elif event.key == pygame.K_ESCAPE:
                         self.m = Menu(self.display)
                         self.start_game()

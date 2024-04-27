@@ -2,6 +2,8 @@ import pygame
 
 pygame.init()
 
+pygame.mixer.music.load("data/20.mp3")
+
 SCORES_FONT = pygame.font.SysFont('Tahoma', 24)
 MENU_FONT = pygame.font.SysFont('Tahoma', 40)
 

@@ -42,6 +42,7 @@ class Menu:
                     if event.key == pygame.K_RETURN:
                         if self.selected == 1:
                             self.mode = 1
+                            pygame.mixer.music.play(-1)
                         elif self.selected == 0:
                             self.mode = 0
                         else:
