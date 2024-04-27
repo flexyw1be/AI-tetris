@@ -18,6 +18,7 @@ class Finish:
             self.display.blit(self.cur_text, (270, 430))
             self.display.blit(self.score, (230, 330))
             self.display.blit(self.text, (250, 230))
+            pygame.mixer.music.stop()
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
