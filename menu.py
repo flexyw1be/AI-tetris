@@ -45,6 +45,7 @@ class Menu:
                             pygame.mixer.music.play(-1)
                         elif self.selected == 0:
                             self.mode = 0
+                            pygame.mixer.music.play(-1)
                         else:
                             quit()
                         self.running = False
