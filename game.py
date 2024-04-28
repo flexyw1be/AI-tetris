@@ -210,7 +210,7 @@ class Game:
             if 0 <= i <= 10:
                 self.f = Finish(self.display, self.score)
                 self.start_game()
-                # self.m = Menu(self.display)
+                self.m = Menu(self.display)
                 if self.m.mode == 0:
                     self.ai_mode()
                 else:

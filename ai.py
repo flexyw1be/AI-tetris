@@ -1,11 +1,11 @@
 # система «штрафов» для расчета оптимального хода
 height = -1000  # высота
-clears = 8  # очистка линии
-holes = -7.5  # дырка
-blockades = -3.5  # блокада
-block = 4  # касание блока
-wall = -500  # касание стены
-floor = 5
+clears = 6000  # очистка линии
+holes = -2000  # дырка
+blockades = -800  # блокада
+block = 250  # касание блока
+wall = 200  # касание стены
+floor = 1000
 
 
 def get_score(lst, cords, y):
@@ -22,9 +22,29 @@ def get_score(lst, cords, y):
            holes * get_holes(lst) + \
            block * get_taken_blocks(lst, cords) + \
            wall * get_taken_walls(lst, cords) + \
-           floor * get_taken_floor(lst, cords)
+           floor * get_taken_floor(lst, cords) + \
+           blockades * get_blockades(lst)
     print("штраф:", summ)
     return summ
+
+
+def get_blockades(lst):
+    s = 0
+    g = []
+    for i in range(180):
+        if i % 10 == 0:
+            if i % 10 not in g and i not in lst and i - 10 not in lst and i + 1 in lst:
+                s += 1
+                g.append(i % 10)
+        elif i % 10 == 9:
+            if i % 10 not in g and i not in lst and i - 10 not in lst and i - 1 in lst:
+                s += 1
+                g.append(i % 10)
+        else:
+            if i % 10 not in g and i not in lst and i - 10 not in lst and i - 1 in lst and i + 1 in lst:
+                s += 1
+                g.append(i % 10)
+    return s
 
 
 def get_taken_blocks(lst, cords):
@@ -33,13 +53,13 @@ def get_taken_blocks(lst, cords):
     for i in cords:
         if 0 < i % 10 < 9:
             if i - 1 in lst and i - 1 not in cords:
-                s.add(i-1)
+                s.add(i - 1)
             if i + 1 in lst and i + 1 not in cords:
-                s.add(i+1)
+                s.add(i + 1)
         if i - 10 in lst and i - 10 not in cords:
-            s.add(i-10)
+            s.add(i - 10)
         if i + 10 in lst and i + 10 not in cords:
-            s.add(i+10)
+            s.add(i + 10)
     return len(s)
 
 
@@ -62,12 +82,39 @@ def get_taken_floor(lst, cords):
 
 
 def get_holes(lst):
-    return 0
+    s = 0
+    for i in range(1, 190):
+        if i > 189:
+            if i % 10 == 9:
+                if i - 10 in lst and i - 1 in lst and i not in lst:
+                    s += 1
+            elif i % 10 == 0:
+                if i - 10 in lst and i + 1 in lst and i not in lst:
+                    s += 1
+            else:
+                if i - 10 in lst and i + 1 in lst and i - 1 in lst and i not in lst:
+                    s += 1
+        else:
+            if i % 10 == 9:
+                if i - 10 in lst and i + 10 in lst and i - 1 in lst and i not in lst:
+                    s += 1
+            elif i % 10 == 0:
+                if i - 10 in lst and i + 10 in lst and i + 1 in lst and i not in lst:
+                    s += 1
+            else:
+                if i - 10 in lst and i + 10 in lst and i + 1 in lst and i - 1 in lst and i not in lst:
+                    s += 1
+    return s
 
 
 def get_clear_lines(lst):
-    return 0
+    s = 0
+    lst = sorted(lst)
+    for i in range(0, 191, 10):
+        if (i + 9 in lst and i in lst) and lst.index(i + 9) - lst.index(i) == 9:
+            s += 2
+    return s
 
 
 def get_height(lst, cords):
-    return 20 -min(cords) // 10
+    return (20 - min(cords) // 10) * 4

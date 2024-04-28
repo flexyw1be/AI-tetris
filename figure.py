@@ -59,9 +59,15 @@ class Figure:
         return x
 
     def check_ai(self, y, lst):
+        g = set([cord % 10 for cord in self.cords])
         for cord in self.cords:
             if cord + 10 * y in lst or (cord // 10 + y) // 20 >= 1:
                 return False
+        for x in range(min(g), max(g) + 1):
+            for y1 in range(y+1):
+                if y1 * 10 + x in lst:
+                    return False
+
         return True
 
     def check_y(self, y: int, lst: list) -> bool:

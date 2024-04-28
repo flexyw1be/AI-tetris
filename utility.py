@@ -53,3 +53,4 @@ def check_break_lines(lst: list, g: int, score: int):
             score += 1
             g = 1.75 + score // 30
     return lst, g, score
+
