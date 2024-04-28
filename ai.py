@@ -5,7 +5,7 @@ holes = -2000  # дырка
 blockades = -800  # блокада
 block = 250  # касание блока
 wall = 200  # касание стены
-floor = 1000
+floor = 200
 
 
 def get_score(lst, cords, y):
@@ -117,4 +117,4 @@ def get_clear_lines(lst):
 
 
 def get_height(lst, cords):
-    return (20 - min(cords) // 10) * 4
+    return sum([20 -x//10 for x in cords])

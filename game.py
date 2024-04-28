@@ -164,7 +164,7 @@ class Game:
                 self.list_of_blocks, self.g, self.score = check_break_lines(self.list_of_blocks, self.g, self.score)
                 self.get_pos()
             pygame.display.flip()
-            self.clock.tick(60)
+            self.clock.tick(90)
         pygame.quit()
 
     def get_blocks_list(self):
