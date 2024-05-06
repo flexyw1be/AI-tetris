@@ -5,21 +5,21 @@ holes = -2000  # дырка
 blockades = -800  # блокада
 block = 250  # касание блока
 wall = 200  # касание стены
-floor = 500
+floor = 1050
 
 
 def get_score(lst, cords, y):
     cords = [i + y * 10 for i in cords]
     print("чистые линии: ", get_clear_lines(lst))
     print("высота: ", get_height(lst, cords))
-    print("дырки: ", get_holes(lst))
+    print("дырки: ", get_holes(lst, cords))
     print("блоки: ", get_taken_blocks(lst, cords))
     print("стены: ", get_taken_walls(lst, cords))
     print("пол: ", get_taken_floor(lst, cords))
 
     summ = height * get_height(lst, cords) + \
            clears * get_clear_lines(lst) + \
-           holes * get_holes(lst) + \
+           holes * get_holes(lst, cords) + \
            block * get_taken_blocks(lst, cords) + \
            wall * get_taken_walls(lst, cords) + \
            floor * get_taken_floor(lst, cords) + \
@@ -81,30 +81,37 @@ def get_taken_floor(lst, cords):
     return summ
 
 
-def get_holes(lst):
+def get_holes(lst, cords):
     s = 0
-    for i in range(1, 190):
-        if i > 189:
-            if i % 10 == 9:
-                if i - 10 in lst and i - 1 in lst and i not in lst:
-                    s += 1
-            elif i % 10 == 0:
-                if i - 10 in lst and i + 1 in lst and i not in lst:
-                    s += 1
-            else:
-                if i - 10 in lst and i + 1 in lst and i - 1 in lst and i not in lst:
-                    s += 1
-        else:
-            if i % 10 == 9:
-                if i - 10 in lst and i + 10 in lst and i - 1 in lst and i not in lst:
-                    s += 1
-            elif i % 10 == 0:
-                if i - 10 in lst and i + 10 in lst and i + 1 in lst and i not in lst:
-                    s += 1
-            else:
-                if i - 10 in lst and i + 10 in lst and i + 1 in lst and i - 1 in lst and i not in lst:
-                    s += 1
+    for cord in cords:
+        if cord // 10 < 19:
+            if cord +10 not in lst:
+                s += 1
     return s
+
+    # s = 0
+    # for i in range(1, 190):
+    #     if i > 189:
+    #         if i % 10 == 9:
+    #             if i - 10 in lst and i - 1 in lst and i not in lst:
+    #                 s += 1
+    #         elif i % 10 == 0:
+    #             if i - 10 in lst and i + 1 in lst and i not in lst:
+    #                 s += 1
+    #         else:
+    #             if i - 10 in lst and i + 1 in lst and i - 1 in lst and i not in lst:
+    #                 s += 1
+    #     else:
+    #         if i % 10 == 9:
+    #             if i - 10 in lst and i + 10 in lst and i - 1 in lst and i not in lst:
+    #                 s += 1
+    #         elif i % 10 == 0:
+    #             if i - 10 in lst and i + 10 in lst and i + 1 in lst and i not in lst:
+    #                 s += 1
+    #         else:
+    #             if i - 10 in lst and i + 10 in lst and i + 1 in lst and i - 1 in lst and i not in lst:
+    #                 s += 1
+    # return s
 
 
 def get_clear_lines(lst):
