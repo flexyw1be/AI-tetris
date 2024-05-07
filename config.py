@@ -4,6 +4,9 @@ pygame.init()
 
 pygame.mixer.music.load("data/music.mp3")
 
+SWITCH_SOUND = pygame.mixer.Sound('data/menu_switch.mp3')
+CLEAR_LINE_SOUND = pygame.mixer.Sound('data/line.mp3')
+
 SCORES_FONT = pygame.font.SysFont('Tahoma', 24)
 MENU_FONT = pygame.font.SysFont('Tahoma', 40)
 

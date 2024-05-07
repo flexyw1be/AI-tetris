@@ -3,7 +3,7 @@ height = -1000  # высота
 clears = 6000  # очистка линии
 holes = -2000  # дырка
 blockades = -800  # блокада
-block = 250  # касание блока
+block = 300  # касание блока
 wall = 200  # касание стены
 floor = 1050
 
@@ -23,27 +23,17 @@ def get_score(lst, cords, y):
            block * get_taken_blocks(lst, cords) + \
            wall * get_taken_walls(lst, cords) + \
            floor * get_taken_floor(lst, cords) + \
-           blockades * get_blockades(lst)
+           blockades * get_blockades(lst, cords)
     print("штраф:", summ)
     return summ
 
 
-def get_blockades(lst):
+def get_blockades(lst, cords):
     s = 0
-    g = []
-    for i in range(180):
-        if i % 10 == 0:
-            if i % 10 not in g and i not in lst and i - 10 not in lst and i + 1 in lst:
+    for cord in cords:
+        if cord // 10 <= 18:
+            if cord + 10 not in lst and cord + 20 not in lst:
                 s += 1
-                g.append(i % 10)
-        elif i % 10 == 9:
-            if i % 10 not in g and i not in lst and i - 10 not in lst and i - 1 in lst:
-                s += 1
-                g.append(i % 10)
-        else:
-            if i % 10 not in g and i not in lst and i - 10 not in lst and i - 1 in lst and i + 1 in lst:
-                s += 1
-                g.append(i % 10)
     return s
 
 
@@ -84,8 +74,8 @@ def get_taken_floor(lst, cords):
 def get_holes(lst, cords):
     s = 0
     for cord in cords:
-        if cord // 10 < 19:
-            if cord +10 not in lst:
+        if cord // 10 < 18:
+            if cord + 10 not in lst:
                 s += 1
     return s
 

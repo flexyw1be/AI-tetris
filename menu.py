@@ -36,16 +36,18 @@ class Menu:
                     if event.key == pygame.K_DOWN:
                         if self.selected + 1 < len(self.button_list):
                             self.selected += 1
+                            SWITCH_SOUND.play()
                     if event.key == pygame.K_UP:
                         if self.selected - 1 >= 0:
                             self.selected -= 1
+                            SWITCH_SOUND.play()
                     if event.key == pygame.K_RETURN:
                         if self.selected == 1:
                             self.mode = 1
-                            pygame.mixer.music.play(-1)
+                            # pygame.mixer.music.play(-1)
                         elif self.selected == 0:
                             self.mode = 0
-                            pygame.mixer.music.play(-1)
+                            # pygame.mixer.music.play(-1)
                         else:
                             quit()
                         self.running = False

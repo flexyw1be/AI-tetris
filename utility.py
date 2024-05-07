@@ -47,6 +47,7 @@ def check_break_lines(lst: list, g: int, score: int):
     lst = sorted(lst)
     for i in range(0, 191, 10):
         if (i + 9 in lst and i in lst) and lst.index(i + 9) - lst.index(i) == 9:
+            CLEAR_LINE_SOUND.play()
             for j in range(i, i + 10):
                 lst.remove(j)
             line_go_down(i, lst)

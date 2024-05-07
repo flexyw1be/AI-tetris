@@ -48,7 +48,7 @@ class Game:
             self.run()
 
     def start_game(self):
-        pygame.mixer.music.play(-1)
+        # pygame.mixer.music.play(-1)
         self.list_of_blocks = []
         self.score = 0
         self.game_over = False
@@ -88,7 +88,7 @@ class Game:
                     self.flLeft = True
                     self.f.move_x(-1, self.list_of_blocks)
                 if event.key == pygame.K_SPACE:
-                    pygame.mixer.music.pause()
+                    # pygame.mixer.music.pause()
                     self.pause()
                     self.paused = True
 
@@ -139,7 +139,7 @@ class Game:
             self.display.fill(BACKGROUND_COLOR)
             self.counter = (self.counter + 1) % 100000
             self.hud()
-            self.pressing_down = True
+            # self.pressing_down = True
 
             for y in range(20):
                 for x in range(10):
@@ -175,6 +175,7 @@ class Game:
         scores = []
         moves = []
         lst = self.get_blocks_list()
+        lst.extend([x for x in range(200, 210)])
         for rot in range(len(FIGURES[self.f.type])):
             self.f.x = 0
             self.f.rotation = rot
@@ -230,7 +231,7 @@ class Game:
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
                         self.paused = not self.paused
-                        pygame.mixer.music.unpause()
+                        # pygame.mixer.music.unpause()
                     elif event.key == pygame.K_ESCAPE:
                         self.m = Menu(self.display)
                         self.start_game()
