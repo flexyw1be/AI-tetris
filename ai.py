@@ -1,11 +1,15 @@
+from genetic_algorithm import get_weights
+
 # система «штрафов» для расчета оптимального хода
-height = -1000  # высота
-clears = 6000  # очистка линии
-holes = -2000  # дырка
-blockades = -800  # блокада
-block = 300  # касание блока
-wall = 200  # касание стены
-floor = 1050
+# height = -1000  # высота
+# clears = 6000  # очистка линии
+# holes = -2000  # дырка
+# blockades = -900  # блокада
+# block = 300  # касание блока
+# wall = 200  # касание стены
+# floor = 1050
+
+height, clears, holes, blockades, block, wall, floor = get_weights()
 
 
 def get_score(lst, cords, y):
@@ -74,7 +78,7 @@ def get_taken_floor(lst, cords):
 def get_holes(lst, cords):
     s = 0
     for cord in cords:
-        if cord // 10 < 18:
+        if cord // 10 < 19:
             if cord + 10 not in lst:
                 s += 1
     return s

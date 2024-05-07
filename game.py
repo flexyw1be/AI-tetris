@@ -18,6 +18,7 @@ class Game:
         self.score = 0
         self.game_over = False
         self.clock = pygame.time.Clock()
+        self.fit = False
 
         self.count_of_broken_lines = 0
         self.count_of_figures = 0
@@ -139,7 +140,8 @@ class Game:
             self.display.fill(BACKGROUND_COLOR)
             self.counter = (self.counter + 1) % 100000
             self.hud()
-            # self.pressing_down = True
+            self.pressing_down = True
+            self.counter %= 10000
 
             for y in range(20):
                 for x in range(10):
@@ -207,6 +209,8 @@ class Game:
         return lst, y
 
     def check_lose(self):
+        if self.fit:
+            return self.score
         for i in self.list_of_blocks:
             if 0 <= i <= 10:
                 self.f = Finish(self.display, self.score)
