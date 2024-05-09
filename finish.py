@@ -12,7 +12,7 @@ class Finish:
         self.display = display
         self.show()
 
-    def show(self):
+    def show(self) -> None:
         while self.running:
             self.display.fill(MENU_COLOR)
             self.display.blit(self.cur_text, (270, 430))

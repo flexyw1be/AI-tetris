@@ -43,15 +43,18 @@ def line_go_down(ind: int, lst: list) -> list:
     return lst
 
 
-def check_break_lines(lst: list, g: int, score: int):
+def check_break_lines(lst: list, g: int, score: int, lines: int) -> [list, int, int, int]:
     lst = sorted(lst)
+    cnt = 0
     for i in range(0, 191, 10):
         if (i + 9 in lst and i in lst) and lst.index(i + 9) - lst.index(i) == 9:
             CLEAR_LINE_SOUND.play()
             for j in range(i, i + 10):
                 lst.remove(j)
             line_go_down(i, lst)
-            score += 1
-            g = 1.75 + score // 30
-    return lst, g, score
+            cnt += 1
+            lines += 1
+            g = 1.75 + lines // 30
+    score += cnt ** 2 * CLEAR_BONUS
+    return lst, g, score, lines
 

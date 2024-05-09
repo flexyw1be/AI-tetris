@@ -17,7 +17,7 @@ class Menu:
         self.mode = 1
         self.show()
 
-    def show(self):
+    def show(self) -> None:
         while self.running:
             self.display.fill(MENU_COLOR)
             self.display.blit(self.logo, (65, 70))
@@ -44,10 +44,10 @@ class Menu:
                     if event.key == pygame.K_RETURN:
                         if self.selected == 1:
                             self.mode = 1
-                            # pygame.mixer.music.play(-1)
+                            pygame.mixer.music.play(-1)
                         elif self.selected == 0:
                             self.mode = 0
-                            # pygame.mixer.music.play(-1)
+                            pygame.mixer.music.play(-1)
                         else:
                             quit()
                         self.running = False

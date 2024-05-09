@@ -18,13 +18,13 @@ class Figure:
     def set_type(self) -> None:
         self.type = randint(0, len(FIGURES) - 1)
 
-    def move_y(self, lst: list, f) -> None:
+    def move_y(self, lst: list) -> None:
         if not self.check_y(1, lst):
             return
         self.y += 1
         self.update()
 
-    def rotate_right(self, lst) -> None:
+    def rotate_right(self, lst: list) -> None:
         old_rotation = self.rotation
         self.rotation = (self.rotation + 1) % len(FIGURES[self.type])
 
@@ -53,18 +53,17 @@ class Figure:
 
     def check_x(self, x: int, lst: list):
         for cord in self.cords:
-            print(cord)
             if cord + x in lst or cord % 10 + x < 0 or cord % 10 + x > 9:
                 return False
         return x
 
-    def check_ai(self, y, lst):
+    def check_ai(self, y: int, lst: list) -> bool:
         g = set([cord % 10 for cord in self.cords])
         for cord in self.cords:
             if cord + 10 * y in lst or (cord // 10 + y) // 20 >= 1:
                 return False
         for x in range(min(g), max(g) + 1):
-            for y1 in range(y+1):
+            for y1 in range(y + 1):
                 if y1 * 10 + x in lst:
                     return False
 
