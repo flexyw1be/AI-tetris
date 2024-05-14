@@ -207,7 +207,7 @@ class Game:
             return self.score
         for i in self.list_of_blocks:
             if 0 <= i <= 10:
-                self.f = Finish(self.display, self.score)
+                self.f = Finish(self.display, self.count_of_broken_lines)
                 self.start_game()
                 # self.m = Menu(self.display)
                 if self.m.mode == 0:
