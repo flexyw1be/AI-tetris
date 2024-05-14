@@ -12,7 +12,7 @@ from genetic_algorithm import get_weights
 height, clears, holes, blockades, block, wall, floor = get_weights()
 
 
-def get_score(lst, cords, y) -> int:
+def get_score(lst: list, cords: list, y: int) -> int:
     cords = [i + y * 10 for i in cords]
     print("чистые линии: ", get_clear_lines(lst))
     print("высота: ", get_height(lst, cords))
@@ -32,7 +32,7 @@ def get_score(lst, cords, y) -> int:
     return summ
 
 
-def get_blockades(lst, cords):
+def get_blockades(lst:list, cords:list) -> int:
     s = 0
     for cord in cords:
         if cord // 10 <= 18:

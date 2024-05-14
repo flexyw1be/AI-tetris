@@ -3,7 +3,7 @@ import pygame
 pygame.init()
 
 # музыка
-pygame.mixer.music.load("data/music.mp3")
+pygame.mixer.music.load("data/20.mp3")
 SWITCH_SOUND = pygame.mixer.Sound('data/menu_switch.mp3')
 CLEAR_LINE_SOUND = pygame.mixer.Sound('data/line.mp3')
 
@@ -35,6 +35,8 @@ FIGURES = [
     [[4, 5, 6, 16], [5, 15, 25, 24], [4, 14, 15, 16], [5, 6, 15, 25]],
     [[14, 4, 5, 6], [4, 5, 15, 25], [6, 14, 15, 16], [5, 15, 25, 26]]
 ]
+
+POINTS = {0:0, 1: 1000, 2: 2000, 3:6000, 4:24000}
 
 # цвета
 COLORS = [

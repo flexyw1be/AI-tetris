@@ -55,6 +55,6 @@ def check_break_lines(lst: list, g: int, score: int, lines: int) -> [list, int, 
             cnt += 1
             lines += 1
             g = 1.75 + lines // 30
-    score += cnt ** 2 * CLEAR_BONUS
+    score += POINTS[cnt]
     return lst, g, score, lines
 

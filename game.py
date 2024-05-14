@@ -91,7 +91,7 @@ class Game:
                     self.flLeft = True
                     self.f.move_x(-1, self.list_of_blocks)
                 if event.key == pygame.K_SPACE:
-                    # pygame.mixer.music.pause()
+                    pygame.mixer.music.pause()
                     self.pause()
                     self.paused = True
 
