@@ -9,7 +9,7 @@ from genetic_algorithm import get_weights
 # wall = 200  # касание стены
 # floor = 1050
 
-height, clears, holes, blockades, block, wall, floor = get_weights()
+HEIGHT, CLEARS, HOLES, BLOCKADES, BLOCK, WALL, FLOOR = get_weights()
 
 
 def get_score(lst: list, cords: list, y: int) -> int:
@@ -21,13 +21,13 @@ def get_score(lst: list, cords: list, y: int) -> int:
     print("стены: ", get_taken_walls(lst, cords))
     print("пол: ", get_taken_floor(lst, cords))
 
-    summ = height * get_height(lst, cords) + \
-           clears * get_clear_lines(lst) + \
-           holes * get_holes(lst, cords) + \
-           block * get_taken_blocks(lst, cords) + \
-           wall * get_taken_walls(lst, cords) + \
-           floor * get_taken_floor(lst, cords) + \
-           blockades * get_blockades(lst, cords)
+    summ = HEIGHT * get_height(lst, cords) + \
+           CLEARS * get_clear_lines(lst) + \
+           HOLES * get_holes(lst, cords) + \
+           BLOCK * get_taken_blocks(lst, cords) + \
+           WALL * get_taken_walls(lst, cords) + \
+           FLOOR * get_taken_floor(lst, cords) + \
+           BLOCKADES * get_blockades(lst, cords)
     print("штраф:", summ)
     return summ
 
