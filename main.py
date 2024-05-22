@@ -11,6 +11,7 @@ if __name__ == "__main__":
     display.fill(BACKGROUND_COLOR)
     g = Game(display)
 
+
 # TODO:
 # -до конца реализовать подсчет штрафа
 # -реализовать подсчет очков

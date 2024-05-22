@@ -1,25 +1,26 @@
-from genetic_algorithm import get_weights
-
 # система «штрафов» для расчета оптимального хода
-# height = -1000  # высота
-# clears = 6000  # очистка линии
-# holes = -2000  # дырка
-# blockades = -900  # блокада
-# block = 300  # касание блока
-# wall = 200  # касание стены
-# floor = 1050
-
-height, clears, holes, blockades, block, wall, floor = get_weights()
+height = 100  # высота
+clears = 6000  # очистка линии
+holes = -2000  # дырка
+blockades = -900  # блокада
+block = 300  # касание блока
+wall = 200  # касание стены
+floor = 1050
 
 
-def get_score(lst: list, cords: list, y: int) -> int:
+def get_weights():
+    return [height, clears, holes, blockades, block, wall, floor]
+
+
+def get_score(lst: list, cords: list, y: int, weights) -> int:
+    height, clears, holes, blockades, block, wall, floor = weights
     cords = [i + y * 10 for i in cords]
-    print("чистые линии: ", get_clear_lines(lst))
-    print("высота: ", get_height(lst, cords))
-    print("дырки: ", get_holes(lst, cords))
-    print("блоки: ", get_taken_blocks(lst, cords))
-    print("стены: ", get_taken_walls(lst, cords))
-    print("пол: ", get_taken_floor(lst, cords))
+    # print("чистые линии: ", get_clear_lines(lst))
+    # print("высота: ", get_height(lst, cords))
+    # print("дырки: ", get_holes(lst, cords))
+    # print("блоки: ", get_taken_blocks(lst, cords))
+    # print("стены: ", get_taken_walls(lst, cords))
+    # print("пол: ", get_taken_floor(lst, cords))
 
     summ = height * get_height(lst, cords) + \
            clears * get_clear_lines(lst) + \
@@ -28,7 +29,7 @@ def get_score(lst: list, cords: list, y: int) -> int:
            wall * get_taken_walls(lst, cords) + \
            floor * get_taken_floor(lst, cords) + \
            blockades * get_blockades(lst, cords)
-    print("штраф:", summ)
+    # print("штраф:", summ)
     return summ
 
 
@@ -42,7 +43,7 @@ def get_blockades(lst:list, cords:list) -> int:
 
 
 def get_taken_blocks(lst, cords):
-    print(cords)
+    # print(cords)
     s = set()
     for i in cords:
         if 0 < i % 10 < 9:

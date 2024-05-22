@@ -1,10 +1,10 @@
-from config import *
-from random import randint
+def get_type():
+    from random import shuffle
+    tiles = list([0, 1, 2, 3, 4, 5, 6])
+    while True:
+        shuffle(tiles)
+        for tile in tiles:
+            return tile
 
-
-f = open('1.txt', 'wt')
-s = ''
-for i in range(3000):
-    g = randint(0, len(FIGURES) - 1)
-    s += str(g) +' '
-f.write(s)
+for i in range(10):
+    print(i)

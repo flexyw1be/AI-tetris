@@ -2,10 +2,19 @@ from deap import base
 from deap import creator
 from deap import tools
 import random
+from fitness_game import Game
+from ai import get_weights
+import pygame
+from config import *
+
+pygame.init()
+display = pygame.display.set_mode((WIDTH, HEIGHT))
+display.fill(BACKGROUND_COLOR)
 
 
-def fitnessTetris(individual) -> int:
-    pass
+def fitnessTetris(individual):
+    g = Game(display, individual)
+    return g.score
 
 
 # константы задачи
@@ -34,21 +43,21 @@ toolbox.register("select", tools.selTournament, tournsize=3)  # отбор ту�
 toolbox.register("mate", tools.cxOnePoint)  # мутация, пока что такЮ но вроде тоже норм
 toolbox.register("mutate", tools.mutFlipBit, indpb=1.0 / LENGTH)  # мутация, и так пойдет
 
-
 # возвращаем скор(кол-во линий)
+score = fitnessTetris(get_weights())
+print(score)
 
-
-def get_weights():
-    HEIGHT = -1000
-    CLEARS = 6000
-    HOLES = -2000
-    BLOCKADES = -900
-    BLOCK = 300
-    WALL = 200
-    FLOOR = 1050
-    WEIGHTS = [HEIGHT, CLEARS, HOLES, BLOCKADES, BLOCK, WALL, FLOOR]
-    # calculate weights with genetic algorithm
-    return WEIGHTS
+# def get_weights():
+#     HEIGHT = 100
+#     CLEARS = 6000
+#     HOLES = -2000
+#     BLOCKADES = -900
+#     BLOCK = 300
+#     WALL = 200
+#     FLOOR = 1050
+#     WEIGHTS = [HEIGHT, CLEARS, HOLES, BLOCKADES, BLOCK, WALL, FLOOR]
+#     # calculate weights with genetic algorithm
+#     return WEIGHTS
 
 
 _COUNT_OF_GAMES = 5
