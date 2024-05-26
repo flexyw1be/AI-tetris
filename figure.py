@@ -1,15 +1,22 @@
+import numpy.random
+
 from config import *
 from random import *
 import pygame
+import numpy as np
 import copy
 
 
 class Figure:
 
-    def __init__(self, x: int, y: int) -> None:
+    def __init__(self, x: int, y: int, type=12) -> None:
         self.x, self.y = x, y
-        self.type = self.get_type()[0]
-        print(self.type)
+        # if type !=12:
+        self.type = self.get_type()
+        #     print(1)
+        # else:
+        #     self.type = type
+        # print(self.type)
         # self.set_type()
         self.color = COLORS[self.type]
         self.rotation = randrange(0, len(FIGURES[self.type]) - 1)
@@ -17,12 +24,7 @@ class Figure:
         self.life = True
 
     def get_type(self):
-        from random import shuffle
-        tiles = list([0, 1, 2, 3, 4, 5, 6])
-        a = []
-        shuffle(tiles)
-        shuffle(tiles)
-        return tiles
+        return numpy.random.randint(0, 7)
 
     def set_type(self) -> None:
         self.type = randrange(0, len(FIGURES) - 1)

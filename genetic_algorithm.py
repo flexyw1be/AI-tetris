@@ -44,9 +44,15 @@ toolbox.register("mate", tools.cxOnePoint)  # мутация, пока что т
 toolbox.register("mutate", tools.mutFlipBit, indpb=1.0 / LENGTH)  # мутация, и так пойдет
 
 # возвращаем скор(кол-во линий)
-score = fitnessTetris(get_weights())
-print(score)
-
+weights = open('weights.txt', 'rt').read().split('\n')
+s = ''
+for i in range(100):
+    g = list(map(int, weights[i].split()))
+    score = fitnessTetris(g)
+    s += f'{weights[i]} {score}\n'
+f = open('results.txt', 'wt')
+f.write(s)
+f.close()
 # def get_weights():
 #     HEIGHT = 100
 #     CLEARS = 6000

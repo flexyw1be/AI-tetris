@@ -1,15 +1,16 @@
 # система «штрафов» для расчета оптимального хода
-height = 100  # высота
-clears = 6000  # очистка линии
-holes = -2000  # дырка
-blockades = -900  # блокада
-block = 300  # касание блока
-wall = 200  # касание стены
-floor = 1050
+HEIGHT = -58
+CLEARS = 643
+HOLES = -732
+BLOCKADES = -749
+BLOCK = 855
+WALL = 909
+FLOOR = 982
 
+#-58 643 -732 -749 855 909 982
 
 def get_weights():
-    return [height, clears, holes, blockades, block, wall, floor]
+    return [HEIGHT, CLEARS, HOLES, BLOCKADES, BLOCK, WALL, FLOOR]
 
 
 def get_score(lst: list, cords: list, y: int, weights) -> int:
@@ -33,7 +34,7 @@ def get_score(lst: list, cords: list, y: int, weights) -> int:
     return summ
 
 
-def get_blockades(lst:list, cords:list) -> int:
+def get_blockades(lst: list, cords: list) -> int:
     s = 0
     for cord in cords:
         if cord // 10 <= 18:
