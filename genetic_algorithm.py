@@ -14,7 +14,8 @@ display.fill(BACKGROUND_COLOR)
 
 def fitnessTetris(individual):
     g = Game(display, individual)
-    return g.score
+    # print(individual)
+    return g.score,
 
 
 # константы задачи
@@ -29,9 +30,9 @@ RANDOM_SEED = 10000  # рандомайзер для генерации знач
 random.seed(RANDOM_SEED)
 
 toolbox = base.Toolbox()
-toolbox.register("randomForList", random.randint, range(-6000, 6000))
+toolbox.register("randomForList", random.randint, -1000, 1000)
 
-creator.create("FitnessMax", base.Fitness, weights=(1.0,))
+creator.create("FitnessMax", base.Fitness, weights=(1.0, ))
 creator.create("Individual", list, fitness=creator.FitnessMax)  # создание класса индивидов
 toolbox.register("individualCreator", tools.initRepeat,  # создаем индивида
                  creator.Individual, toolbox.randomForList, LENGTH)
@@ -43,16 +44,77 @@ toolbox.register("select", tools.selTournament, tournsize=3)  # отбор ту�
 toolbox.register("mate", tools.cxOnePoint)  # мутация, пока что такЮ но вроде тоже норм
 toolbox.register("mutate", tools.mutFlipBit, indpb=1.0 / LENGTH)  # мутация, и так пойдет
 
-# возвращаем скор(кол-во линий)
-weights = open('weights.txt', 'rt').read().split('\n')
-s = ''
-for i in range(100):
-    g = list(map(int, weights[i].split()))
-    score = fitnessTetris(g)
-    s += f'{weights[i]} {score}\n'
-f = open('results.txt', 'wt')
-f.write(s)
-f.close()
+
+def main():
+    # create initial population (generation 0):
+    population = toolbox.populationCreator(n=POPULATION_SIZE)
+    print(population)
+    generationCounter = 0
+
+    # calculate fitness tuple for each individual in the population:
+    fitnessValues = list(map(toolbox.evaluate, population))
+    print(list(zip(population, fitnessValues)))
+    for individual, fitnessValue in zip(population, fitnessValues):
+        print(individual.fitness)
+        print(fitnessValue)
+        individual.fitness.values = fitnessValue
+
+    # extract fitness values from all individuals in population:
+    fitnessValues = [individual.fitness.values[0] for individual in population]
+
+    # initialize statistics accumulators:
+    maxFitnessValues = []
+    meanFitnessValues = []
+
+    # main evolutionary loop:
+    # stop if max fitness value reached the known max value
+    # OR if number of generations exceeded the preset value:
+    while generationCounter < MAX_GENERATIONS:
+        # update counter:
+        generationCounter = generationCounter + 1
+
+        # apply the selection operator, to select the next generation's individuals:
+        offspring = toolbox.select(population, len(population))
+        # clone the selected individuals:
+        offspring = list(map(toolbox.clone, offspring))
+
+    # apply the crossover operator to pairs of offspring:
+        for child1, child2 in zip(offspring[::2], offspring[1::2]):
+            if random.random() < P_CROSSOVER:
+                toolbox.mate(child1, child2)
+                del child1.fitness.values
+                del child2.fitness.values
+
+        for mutant in offspring:
+            if random.random() < P_MUTATION:
+                toolbox.mutate(mutant)
+                del mutant.fitness.values
+
+        # calculate fitness for the individuals with no previous calculated fitness value:
+        freshIndividuals = [ind for ind in offspring if not ind.fitness.valid]
+        freshFitnessValues = list(map(toolbox.evaluate, freshIndividuals))
+        for individual, fitnessValue in zip(freshIndividuals, freshFitnessValues):
+            individual.fitness.values = fitnessValue
+
+        # replace the current population with the offspring:
+        population[:] = offspring
+
+        # collect fitnessValues into a list, update statistics and print:
+        fitnessValues = [ind.fitness.values[0] for ind in population]
+
+        maxFitness = max(fitnessValues)
+        meanFitness = sum(fitnessValues) / len(population)
+        maxFitnessValues.append(maxFitness)
+        meanFitnessValues.append(meanFitness)
+        print("- Generation {}: Max Fitness = {}, Avg Fitness = {}".format(generationCounter, maxFitness, meanFitness))
+
+        # find and print best individual:
+        best_index = fitnessValues.index(max(fitnessValues))
+        print("Best Individual = ", *population[best_index], "\n")
+
+if __name__ == '__main__':
+    main()
+
 # def get_weights():
 #     HEIGHT = 100
 #     CLEARS = 6000
@@ -64,11 +126,3 @@ f.close()
 #     WEIGHTS = [HEIGHT, CLEARS, HOLES, BLOCKADES, BLOCK, WALL, FLOOR]
 #     # calculate weights with genetic algorithm
 #     return WEIGHTS
-
-
-_COUNT_OF_GAMES = 5
-for generation in range(MAX_GENERATIONS):
-    scores = []
-    for _ in range(_COUNT_OF_GAMES):
-        pass
-    # юзаем га и находим веса (get_weights())
