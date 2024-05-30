@@ -6,7 +6,7 @@ from menu import Menu
 from figure import Figure
 from finish import Finish
 from utility import *
-from ai import get_score
+from ai import get_score, get_weights
 import copy
 
 
@@ -48,6 +48,8 @@ class Game:
         else:
             self.player_mode()
 
+
+
     def start_game(self) -> None:
         pygame.mixer.music.play(-1)
         self.list_of_blocks = []
@@ -69,7 +71,6 @@ class Game:
         self.f = Figure(0, 0)
         self.next_figure = Figure(0, 0)
         self.counter = 0
-        self.dryness = 0 if self.f.type == 0 else 1
 
         self.pressing_down = False
         self.flLeft = self.flRight = False
@@ -131,7 +132,8 @@ class Game:
                 self.f = self.next_figure
                 self.next_figure = Figure(0, 0)
                 self.count_of_figures += 1
-                self.list_of_blocks, self.g, self.score, self.count_of_broken_lines = check_break_lines(self.list_of_blocks, self.g, self.score, self.count_of_broken_lines)
+                self.list_of_blocks, self.g, self.score, self.count_of_broken_lines = check_break_lines(
+                    self.list_of_blocks, self.g, self.score, self.count_of_broken_lines)
             pygame.display.flip()
             self.clock.tick(FPS)
         pygame.quit()
@@ -162,7 +164,8 @@ class Game:
                 self.f = self.next_figure
                 self.next_figure = Figure(0, 0)
                 self.count_of_figures += 1
-                self.list_of_blocks, self.g, self.score, self.count_of_broken_lines = check_break_lines(self.list_of_blocks, self.g, self.score, self.count_of_broken_lines)
+                self.list_of_blocks, self.g, self.score, self.count_of_broken_lines = check_break_lines(
+                    self.list_of_blocks, self.g, self.score, self.count_of_broken_lines)
                 self.get_pos()
             pygame.display.flip()
             self.clock.tick(900)
@@ -184,7 +187,7 @@ class Game:
             self.f.move_x(-l_border, self.list_of_blocks)
             for j in range(10):
                 lst, y = self.get_list(self.get_blocks_list())
-                scores.append([rotation, self.f.x, get_score(lst, self.f.cords, y)])
+                scores.append([rotation, self.f.x, get_score(lst, self.f.cords, y, get_weights())])
                 self.f.move_x(1, self.list_of_blocks)
         print("ФИГУРА:", max(scores, key=lambda x: x[2]))
         rotation, x, score = max(scores, key=lambda x: x[2])

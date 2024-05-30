@@ -1,22 +1,33 @@
+import numpy.random
+
 from config import *
 from random import *
 import pygame
+import numpy as np
 import copy
 
 
 class Figure:
 
-    def __init__(self, x: int, y: int) -> None:
+    def __init__(self, x: int, y: int, type=12) -> None:
         self.x, self.y = x, y
-        self.type = 0
-        self.set_type()
+        # if type !=12:
+        self.type = self.get_type()
+        #     print(1)
+        # else:
+        #     self.type = type
+        # print(self.type)
+        # self.set_type()
         self.color = COLORS[self.type]
-        self.rotation = randint(0, len(FIGURES[self.type]) - 1)
+        self.rotation = randrange(0, len(FIGURES[self.type]) - 1)
         self.cords = copy.deepcopy(FIGURES[self.type][self.rotation])
         self.life = True
 
+    def get_type(self):
+        return numpy.random.randint(0, 7)
+
     def set_type(self) -> None:
-        self.type = randint(0, len(FIGURES) - 1)
+        self.type = randrange(0, len(FIGURES) - 1)
 
     def move_y(self, lst: list) -> None:
         if not self.check_y(1, lst):
