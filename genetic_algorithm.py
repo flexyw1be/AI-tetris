@@ -1,6 +1,8 @@
 from deap import base
 from deap import creator
 from deap import tools
+from deap import algorithms
+import numpy
 import random
 from fitness_game import Game
 import matplotlib.pyplot as plt
@@ -24,6 +26,7 @@ POPULATION_SIZE = 20
 P_CROSSOVER = 0.9
 P_MUTATION = 0.05
 MAX_GENERATIONS = 5
+HALL_OF_FAME_SIZE = 10
 
 RANDOM_SEED = 10000
 random.seed(RANDOM_SEED)
@@ -44,63 +47,35 @@ toolbox.register("mate", tools.cxOnePoint)
 toolbox.register("mutate", tools.mutUniformInt, low=-100, up=100, indpb=P_MUTATION)
 
 def main():
+    # create initial population (generation 0):
     population = toolbox.populationCreator(n=POPULATION_SIZE)
-    print(population)
-    generationCounter = 0
 
-    fitnessValues = list(map(toolbox.evaluate, population))
-    print(list(zip(population, fitnessValues)))
-    for individual, fitnessValue in zip(population, fitnessValues):
-        print(individual.fitness)
-        print(fitnessValue)
-        individual.fitness.values = fitnessValue
+    # prepare the statistics object:
+    stats = tools.Statistics(lambda ind: ind.fitness.values)
+    stats.register("max", numpy.max)
+    stats.register("avg", numpy.mean)
 
-    fitnessValues = [individual.fitness.values[0] for individual in population]
+    # define the hall-of-fame object:
+    hof = tools.HallOfFame(HALL_OF_FAME_SIZE)
 
-    maxFitnessValues = []
-    meanFitnessValues = []
+    # perform the Genetic Algorithm flow with hof feature added:
+    population, logbook = algorithms.eaSimple(population, toolbox, cxpb=P_CROSSOVER, mutpb=P_MUTATION,
+                                              ngen=MAX_GENERATIONS, stats=stats, halloffame=hof, verbose=True)
 
+    # print Hall of Fame info:
+    print("Hall of Fame Individuals = ", *hof.items, sep="\n")
+    print("Best Ever Individual = ", hof.items[0])
 
-    while generationCounter < MAX_GENERATIONS:
-        generationCounter = generationCounter + 1
+    # extract statistics:
+    maxFitnessValues, meanFitnessValues = logbook.select("max", "avg")
 
-        offspring = toolbox.select(population, len(population))
-        offspring = list(map(toolbox.clone, offspring))
-
-        for child1, child2 in zip(offspring[::2], offspring[1::2]):
-            if random.random() < P_CROSSOVER:
-                toolbox.mate(child1, child2)
-                del child1.fitness.values
-                del child2.fitness.values
-
-        for mutant in offspring:
-            if random.random() < P_MUTATION:
-                toolbox.mutate(mutant)
-                del mutant.fitness.values
-
-        freshIndividuals = [ind for ind in offspring if not ind.fitness.valid]
-        freshFitnessValues = list(map(toolbox.evaluate, freshIndividuals))
-        for individual, fitnessValue in zip(freshIndividuals, freshFitnessValues):
-            individual.fitness.values = fitnessValue
-
-        population[:] = offspring
-
-        fitnessValues = [ind.fitness.values[0] for ind in population]
-
-        maxFitness = max(fitnessValues)
-        meanFitness = sum(fitnessValues) / len(population)
-        maxFitnessValues.append(maxFitness)
-        meanFitnessValues.append(meanFitness)
-        print("- Generation {}: Max Fitness = {}, Avg Fitness = {}".format(generationCounter, maxFitness, meanFitness))
-
-        best_index = fitnessValues.index(max(fitnessValues))
-        print("Best Individual = ", *population[best_index], "\n")
-
+    # plot statistics:
     plt.plot(maxFitnessValues, color='red')
     plt.plot(meanFitnessValues, color='green')
     plt.xlabel('Generation')
     plt.ylabel('Max / Average Fitness')
     plt.title('Max and Average Fitness over Generations')
+
     plt.show()
 
 
