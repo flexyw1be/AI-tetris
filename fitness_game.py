@@ -72,7 +72,7 @@ class Game:
                 self.get_pos()
             pygame.display.flip()
             self.clock.tick(900)
-        return self.score
+        return self.count_of_broken_lines
 
     def get_blocks_list(self) -> list:
         lst = copy.deepcopy(self.list_of_blocks)
