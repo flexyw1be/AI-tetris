@@ -24,11 +24,11 @@ def fitnessTetris(individual):
 
 LENGTH = 7
 
-POPULATION_SIZE = 100
-P_CROSSOVER = 0.9
-P_MUTATION = 0.1
-MAX_GENERATIONS = 5
-# HALL_OF_FAME_SIZE = 2
+POPULATION_SIZE = 50
+P_CROSSOVER = 0.95
+P_MUTATION = 0.10
+MAX_GENERATIONS = 25
+HALL_OF_FAME_SIZE = 2
 
 # RANDOM_SEED = 20000
 # random.seed(RANDOM_SEED)
@@ -49,73 +49,35 @@ toolbox.register("mate", tools.cxTwoPoint)
 toolbox.register("mutate", tools.mutUniformInt, low=-100, up=100, indpb=1.0/LENGTH)
 
 def main():
+    # create initial population (generation 0):
     population = toolbox.populationCreator(n=POPULATION_SIZE)
-    generationCounter = 0
 
-    # calculate fitness tuple for each individual in the population:
-    fitnessValues = list(map(toolbox.evaluate, population))
-    for individual, fitnessValue in zip(population, fitnessValues):
-        individual.fitness.values = fitnessValue
+    # prepare the statistics object:
+    stats = tools.Statistics(lambda ind: ind.fitness.values)
+    stats.register("max", numpy.max)
+    stats.register("avg", numpy.mean)
 
-    # extract fitness values from all individuals in population:
-    fitnessValues = [individual.fitness.values[0] for individual in population]
+    # define the hall-of-fame object:
+    hof = tools.HallOfFame(HALL_OF_FAME_SIZE)
 
-    # initialize statistics accumulators:
-    maxFitnessValues = []
-    meanFitnessValues = []
+    # perform the Genetic Algorithm flow with hof feature added:
+    population, logbook = algorithms.eaSimple(population, toolbox, cxpb=P_CROSSOVER, mutpb=P_MUTATION,
+                                              ngen=MAX_GENERATIONS, stats=stats, halloffame=hof, verbose=True)
 
-    # main evolutionary loop:
-    # stop if max fitness value reached the known max value
-    # OR if number of generations exceeded the preset value:
-    while generationCounter < MAX_GENERATIONS:
-        # update counter:
-        generationCounter = generationCounter + 1
+    best = hof.items[0]
+    print("-- Best Ever Individual = ", best)
+    print("-- Best Ever Fitness = ", best.fitness.values[0])
 
-        # apply the selection operator, to select the next generation's individuals:
-        offspring = toolbox.select(population, len(population))
-        # clone the selected individuals:
-        offspring = list(map(toolbox.clone, offspring))
+    # extract statistics:
+    maxFitnessValues, meanFitnessValues = logbook.select("max", "avg")
 
-        # apply the crossover operator to pairs of offspring:
-        for child1, child2 in zip(offspring[::2], offspring[1::2]):
-            if random.random() < P_CROSSOVER:
-                toolbox.mate(child1, child2)
-                del child1.fitness.values
-                del child2.fitness.values
-
-        for mutant in offspring:
-            if random.random() < P_MUTATION:
-                toolbox.mutate(mutant)
-                del mutant.fitness.values
-
-        # calculate fitness for the individuals with no previous calculated fitness value:
-        freshIndividuals = [ind for ind in offspring if not ind.fitness.valid]
-        freshFitnessValues = list(map(toolbox.evaluate, freshIndividuals))
-        for individual, fitnessValue in zip(freshIndividuals, freshFitnessValues):
-            individual.fitness.values = fitnessValue
-
-        # replace the current population with the offspring:
-        population[:] = offspring
-
-        # collect fitnessValues into a list, update statistics and print:
-        fitnessValues = [ind.fitness.values[0] for ind in population]
-
-        maxFitness = max(fitnessValues)
-        meanFitness = sum(fitnessValues) / len(population)
-        maxFitnessValues.append(maxFitness)
-        meanFitnessValues.append(meanFitness)
-        print("- Generation {}: Max Fitness = {}, Avg Fitness = {}".format(generationCounter, maxFitness, meanFitness))
-
-        # find and print best individual:
-        best_index = fitnessValues.index(max(fitnessValues))
-        print("Best Individual = ", *population[best_index], "\n")
-
-    # Genetic Algorithm is done - plot statistics:
+    # plot statistics:
     plt.plot(maxFitnessValues, color='red')
     plt.plot(meanFitnessValues, color='green')
     plt.xlabel('Generation')
     plt.ylabel('Max / Average Fitness')
     plt.title('Max and Average Fitness over Generations')
+
     plt.show()
 
 
