@@ -1,13 +1,13 @@
 # система «штрафов» для расчета оптимального хода
-HEIGHT = -58
-CLEARS = 643
-HOLES = -732
-BLOCKADES = -749
-BLOCK = 855
-WALL = 909
-FLOOR = 982
+HEIGHT = -63
+CLEARS = 368
+HOLES = -538
+BLOCKADES = -815
+BLOCK = 684
+WALL = 758
+FLOOR = 783
 
-#-58 643 -732 -749 855 909 982
+#-63 368 -538 -815 684 758 783
 
 def get_weights():
     return [HEIGHT, CLEARS, HOLES, BLOCKADES, BLOCK, WALL, FLOOR]
@@ -77,6 +77,16 @@ def get_taken_floor(lst, cords):
     return summ
 
 
+def get_column_heights(lst):
+    # get the hights of each column
+    heghts = [0 for i in range(10)]
+
+    for y in range(19, -1, -1):
+        for x in range(10):
+            if y * 10 + x in lst:
+                heghts[x] = y
+
+    return heghts
 def get_holes(lst, cords):
     s = 0
     for cord in cords:
@@ -84,6 +94,7 @@ def get_holes(lst, cords):
             if cord + 10 not in lst:
                 s += 1
     return s
+
 
     # s = 0
     # for i in range(1, 190):
