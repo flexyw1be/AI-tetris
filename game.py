@@ -28,7 +28,6 @@ class Game:
         self.cur_text = MENU_FONT.render('Press ENTER', True, 'darkgrey')
         self.space_text = SCORES_FONT.render('Press SPACE', True, 'darkgrey')
         self.home_text = SCORES_FONT.render('Press ESCAPE to HOME', True, 'darkgrey')
-
         self.g = 1.75
         self.f = Figure(0, 0)
         self.next_figure = Figure(0, 0)
@@ -124,7 +123,7 @@ class Game:
             self.draw_field()
             self.events()
             self.check_lose()
-            if self.counter % (FPS // self.g) == 0 or self.pressing_down:
+            if self.counter % (FPS//self.g) == 0 or self.pressing_down:
                 self.f.move_y(self.list_of_blocks)
             if not self.f.life:
                 self.list_of_blocks.extend(self.f.cords)
@@ -168,7 +167,7 @@ class Game:
                     self.list_of_blocks, self.g, self.score, self.count_of_broken_lines)
                 self.get_pos()
             pygame.display.flip()
-            self.clock.tick(900)
+            self.clock.tick(150)
         pygame.quit()
 
     def get_blocks_list(self) -> list:

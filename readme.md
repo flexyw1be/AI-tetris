@@ -4,8 +4,9 @@
 
 ## Game menu
 ![](https://github.com/flexyw1be/AI-tetris/raw/master/data/menu.png)
+
 ## Game
-![](https://github.com/flexyw1be/AI-tetris/raw/master/data/movie.gif)
+![](https://github.com/flexyw1be/AI-tetris/raw/master/data/game.png)
 
 ### install this modules to use it
 ```

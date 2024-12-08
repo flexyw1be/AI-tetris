@@ -8,14 +8,13 @@ import copy
 
 
 class Figure:
-
     def __init__(self, x: int, y: int, type=12) -> None:
         self.x, self.y = x, y
         # if type !=12:
-        # self.type = self.get_type()
+        self.type = self.get_type()
         #     print(1)
         # else:
-        self.type = type
+        # self.type = type
         # print(self.type)
         # self.set_type()
         self.color = COLORS[self.type]
